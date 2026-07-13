@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e8449" />
+      <stop offset="100%" style="stop-color:#82e0aa" />
+    </linearGradient>
+    <circle cx="230" cy="300" r="120" fill="#1e8449" opacity="0.12" />
+    <circle cx="570" cy="110" r="84" fill="#82e0aa" opacity="0.1" />
+  </defs>
+  <rect width="800" height="400" fill="url(#g)" />
+  <circle cx="400" cy="200" r="160" fill="#1e8449" opacity="0.06" />
+  <rect x="0" y="280" width="800" height="120" fill="url(#g)" opacity="0.15" />
+  <text x="40" y="170" font-family="Georgia, serif" font-size="28" font-weight="bold" fill="white" opacity="0.95">
+    Les réserves naturelles tunisiennes étendues de 15%
+  </text>
+  <text x="40" y="210" font-family="Arial, sans-serif" font-size="14" fill="white" opacity="0.5">
+    Biodiversite — Ecoterre Tunisie
+  </text>
+  <rect x="40" y="230" width="80" height="3" rx="1.5" fill="white" opacity="0.35" />
+  <rect x="40" y="320" width="60" height="4" rx="2" fill="white" opacity="0.15" />
+</svg>
