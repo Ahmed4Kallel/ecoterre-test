@@ -281,6 +281,14 @@ export default function Header({ user = null, categories = [] }: HeaderProps) {
           <div className="mr-1 ml-1 w-8 h-8">
             <ThemeToggle />
           </div>
+          {!user && (
+            <Link
+              href="/admin/login"
+              className="rounded bg-white/15 px-2 py-1 text-xs font-semibold hover:bg-white/25 transition-colors"
+            >
+              {t("login")}
+            </Link>
+          )}
           <div className="w-28">
             <SearchBar />
           </div>
