@@ -2,6 +2,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import AdminLayoutClient from "@/components/admin/AdminLayout";
+import { AdminLocaleProvider } from "@/components/admin/AdminLocaleProvider";
+import frMessages from "@/i18n/fr/common.json";
 
 const PUBLIC_ADMIN_PATHS = [
   "/admin/login",
@@ -18,7 +20,7 @@ export default async function AdminLayout({
   const pathname = headersList.get("x-current-path") || "";
 
   if (PUBLIC_ADMIN_PATHS.includes(pathname)) {
-    return <>{children}</>;
+    return <AdminLocaleProvider locale="fr" messages={frMessages}>{children}</AdminLocaleProvider>;
   }
 
   const user = await getSession();
@@ -30,8 +32,10 @@ export default async function AdminLayout({
   const { password: _, ...safeUser } = user;
 
   return (
-    <AdminLayoutClient user={{ name: safeUser.name, role: safeUser.role }}>
-      {children}
-    </AdminLayoutClient>
+    <AdminLocaleProvider locale="fr" messages={frMessages}>
+      <AdminLayoutClient user={{ name: safeUser.name, role: safeUser.role }}>
+        {children}
+      </AdminLayoutClient>
+    </AdminLocaleProvider>
   );
 }
