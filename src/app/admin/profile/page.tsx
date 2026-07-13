@@ -19,6 +19,7 @@ export default async function AdminProfilePage() {
         email: user.email,
         role: user.role,
         createdAt: user.createdAt,
+        avatar: user.avatar,
       }}
       stats={{
         articleCount: userArticles.length,

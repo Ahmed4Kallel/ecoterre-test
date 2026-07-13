@@ -1,12 +1,5 @@
 {
   "buildCommand": "npm run db:checkpoint && next build",
   "installCommand": "npm install",
-  "outputDirectory": ".next",
-  "functions": {
-    "api/*.ts": {
-      "runtime": "nodejs@22.x",
-      "memory": 512,
-      "maxDuration": 10
-    }
-  }
+  "outputDirectory": ".next"
 }
