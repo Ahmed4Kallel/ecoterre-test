@@ -34,7 +34,7 @@ function getInitials(name: string): string {
 }
 
 export default function AdminLayout({ user, children }: AdminLayoutProps) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -82,24 +82,26 @@ export default function AdminLayout({ user, children }: AdminLayoutProps) {
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         {/* Logo */}
-        <div className="flex h-16 items-center gap-3 border-b border-gray-100 px-4 dark:border-slate-800">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-600 to-emerald-700 text-sm font-bold text-white shadow-sm">
-            E
+        <Link href={`/${locale}`} className="block">
+          <div className="flex h-16 items-center gap-3 border-b border-gray-100 px-4 dark:border-slate-800">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-600 to-emerald-700 text-sm font-bold text-white shadow-sm">
+              E
+            </div>
+            <AnimatePresence mode="wait">
+              {!collapsed && (
+                <motion.span
+                  key="logo-text"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-lg font-bold text-gray-800 dark:text-slate-100"
+                >
+                  Ecoterre
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
-          <AnimatePresence mode="wait">
-            {!collapsed && (
-              <motion.span
-                key="logo-text"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-lg font-bold text-gray-800 dark:text-slate-100"
-              >
-                Ecoterre
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </div>
+        </Link>
 
         {/* User info */}
         <div className="mx-3 mt-3 mb-2 flex items-center gap-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 p-3 dark:from-green-900/30 dark:to-emerald-900/20">
