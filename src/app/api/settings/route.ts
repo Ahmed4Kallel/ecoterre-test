@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireAdmin } from "@/lib/auth";
-import { findAll, insert, remove } from "@/lib/db";
-import { generateId } from "@/lib/utils";
-import type { SiteSetting } from "@/lib/types";
-import fs from "fs";
-import path from "path";
+import { getDb } from "@/lib/database";
 
 export async function GET() {
   try {
@@ -13,10 +9,11 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const settings = findAll<SiteSetting>("settings");
+    const db = getDb();
+    const rows = db.prepare("SELECT key, value FROM settings").all() as { key: string; value: string }[];
     const map: Record<string, string> = {};
-    for (const s of settings) {
-      map[s.key] = s.value;
+    for (const row of rows) {
+      map[row.key] = row.value;
     }
     return NextResponse.json({ settings: map });
   } catch {
@@ -32,22 +29,17 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const existing = findAll<SiteSetting>("settings");
+    const db = getDb();
+    const now = new Date().toISOString();
+    const upsert = db.prepare(
+      "INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at"
+    );
 
     for (const [key, value] of Object.entries(body)) {
-      const existingItem = existing.find((s) => s.key === key);
-      if (existingItem) {
-        const index = existing.findIndex((s) => s.key === key);
-        existing[index] = { key, value: String(value) };
-      } else {
-        existing.push({ key, value: String(value) });
-      }
+      upsert.run(key, String(value), now);
     }
 
-    const filePath = path.join(process.cwd(), "src", "data", "settings.json");
-    fs.writeFileSync(filePath, JSON.stringify(existing, null, 2), "utf-8");
-
-    return NextResponse.json({ success: true, settings: existing });
+    return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Failed to save settings" }, { status: 500 });
   }

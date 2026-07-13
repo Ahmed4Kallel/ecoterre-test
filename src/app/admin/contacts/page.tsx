@@ -14,15 +14,5 @@ export default async function ContactsPage() {
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Messages de contact</h1>
-        <span className="text-sm text-gray-500">
-          {messages.filter((m) => !m.read).length} non lus
-        </span>
-      </div>
-      <ContactsList messages={messages} />
-    </div>
-  );
+  return <ContactsList messages={messages} />;
 }

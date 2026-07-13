@@ -1,43 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireAdmin } from "@/lib/auth";
-import { findById, update, remove } from "@/lib/db";
-import type { ContactMessage } from "@/lib/types";
+import { remove } from "@/lib/db";
+import { getDb } from "@/lib/database";
 
-export async function PATCH(request: NextRequest) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const user = await getSession();
     if (!requireAdmin(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const url = new URL(request.url);
-    const id = url.pathname.split("/").pop();
+    const { id } = await params;
     const body = await request.json();
 
-    if (!id) {
-      return NextResponse.json({ error: "ID required" }, { status: 400 });
-    }
-
-    const updated = update("contacts", id, { read: body.read });
-    return NextResponse.json({ message: updated });
+    const db = getDb();
+    db.prepare("UPDATE contacts SET is_read = ? WHERE id = ?").run(body.read ? 1 : 0, id);
+    return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Failed to update contact" }, { status: 500 });
   }
 }
 
-export async function DELETE(request: NextRequest) {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const user = await getSession();
     if (!requireAdmin(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const url = new URL(request.url);
-    const id = url.pathname.split("/").pop();
-
-    if (!id) {
-      return NextResponse.json({ error: "ID required" }, { status: 400 });
-    }
+    const { id } = await params;
 
     remove("contacts", id);
     return NextResponse.json({ success: true });
