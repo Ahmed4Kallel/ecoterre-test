@@ -12,7 +12,8 @@
     "test:e2e": "playwright test",
     "test:all": "vitest run && playwright test",
     "db:seed": "npx tsx src/lib/seed.ts",
-    "db:demo": "npx tsx src/lib/demo-seed.ts"
+    "db:demo": "npx tsx src/lib/demo-seed.ts",
+    "db:checkpoint": "npx tsx -e \"const Database=require('better-sqlite3');const path=require('path');const db=new Database(path.join(process.cwd(),'src','data','ecoterre.db'));db.pragma('journal_mode=DELETE');db.pragma('wal_checkpoint(TRUNCATE)');db.close();console.log('DB checkpointed for Vercel deploy');\""
   },
   "dependencies": {
     "@tiptap/extension-image": "^3.27.3",

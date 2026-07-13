@@ -16,6 +16,9 @@ const CSP = [
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["better-sqlite3"],
+  outputFileTracingIncludes: {
+    "/*": ["./src/data/**/*"],
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'picsum.photos' },
