@@ -7,7 +7,7 @@ export default async function AdminUsersPage() {
   if (!user) redirect("/admin/login");
   if (!requireAdmin(user)) redirect("/admin");
 
-  const users = getAllUsers().map((u) => {
+  const users = (await getAllUsers()).map((u) => {
     const { password: _, ...safe } = u;
     return safe;
   });

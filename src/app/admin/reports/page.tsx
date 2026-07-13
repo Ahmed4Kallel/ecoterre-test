@@ -8,7 +8,7 @@ export default async function AdminReportsPage() {
   const user = await getSession();
   if (!user) redirect("/admin/login");
 
-  const articles = findAll<Article>("articles");
+  const articles = await findAll<Article>("articles");
   const reports = articles.filter((a) => a.pdfUrl && a.pdfUrl.length > 0);
 
   return <ReportsClient reports={reports} />;

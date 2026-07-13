@@ -7,15 +7,11 @@ import {
   getCategoryCounts,
   getDashboardStats,
   getTags as dbGetTags,
-  mapArticleRow,
+  enrichArticleWithRelations,
 } from "./db";
-import { getDb } from "./database";
+import { supabase } from "./database";
 import type { ArticleRow } from "./db-types";
 import type { Article, Category, Tag } from "./types";
-
-function makeArticle(row: ArticleRow, _db: unknown): Article {
-  return mapArticleRow(row);
-}
 
 function mapTagRow(row: {
   id: string;
@@ -39,48 +35,94 @@ export async function getPublishedArticles(options?: {
   tag?: string;
   featured?: boolean;
 }): Promise<Article[]> {
-  const db = getDb();
-  let sql = `SELECT * FROM articles WHERE status = 'published'`;
-  const params: unknown[] = [];
+  let query = supabase
+    .from("articles")
+    .select("*")
+    .eq("status", "published")
+    .order("published_at", { ascending: false });
 
   if (options?.featured) {
-    sql += ` AND is_featured = 1`;
+    query = query.eq("is_featured", 1);
   }
 
   if (options?.category) {
-    sql += ` AND id IN (SELECT ac.article_id FROM article_categories ac JOIN categories c ON c.id = ac.category_id WHERE c.slug = ?)`;
-    params.push(options.category);
+    const { data: catIds } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("slug", options.category)
+      .single();
+    if (catIds) {
+      const { data: artIds } = await supabase
+        .from("article_categories")
+        .select("article_id")
+        .eq("category_id", catIds.id);
+      const ids = (artIds ?? []).map((r: { article_id: string }) => r.article_id);
+      if (ids.length > 0) query = query.in("id", ids);
+      else return [];
+    }
   }
 
   if (options?.tag) {
-    sql += ` AND id IN (SELECT at.article_id FROM article_tags at JOIN tags t ON t.id = at.tag_id WHERE t.slug = ?)`;
-    params.push(options.tag);
+    const { data: tag } = await supabase
+      .from("tags")
+      .select("id")
+      .eq("slug", options.tag)
+      .maybeSingle();
+    if (tag) {
+      const { data: artIds } = await supabase
+        .from("article_tags")
+        .select("article_id")
+        .eq("tag_id", tag.id);
+      const ids = (artIds ?? []).map((r: { article_id: string }) => r.article_id);
+      if (ids.length > 0) query = query.in("id", ids);
+      else return [];
+    }
   }
-
-  sql += ` ORDER BY published_at DESC`;
 
   if (options?.limit !== undefined) {
-    sql += ` LIMIT ?`;
-    params.push(options.limit);
-  }
-  if (options?.offset !== undefined) {
-    sql += ` OFFSET ?`;
-    params.push(options.offset);
+    const start = options?.offset ?? 0;
+    query = query.range(start, start + options.limit - 1);
   }
 
-  const rows = db.prepare(sql).all(...params) as ArticleRow[];
-  return rows.map((r) => makeArticle(r, db));
+  const { data, error } = await query;
+  if (error) throw error;
+  if (!data) return [];
+
+  const articles = await Promise.all(
+    (data as ArticleRow[]).map((r) => {
+      const a = {
+        id: r.id,
+        slug: r.slug,
+        title: { fr: r.title_fr, ar: r.title_ar },
+        content: { fr: r.content_fr, ar: r.content_ar },
+        excerpt: { fr: r.excerpt_fr ?? "", ar: r.excerpt_ar ?? "" },
+        coverImage: r.cover_image ?? undefined,
+        categoryIds: [],
+        tagIds: undefined,
+        authorId: r.author_id,
+        authorName: undefined,
+        status: r.status,
+        views: r.views ?? 0,
+        readingTime: r.reading_time ?? 0,
+        isFeatured: r.is_featured === 1,
+        audioUrl: r.audio_url ?? undefined,
+        videoUrl: r.video_url ?? undefined,
+        pdfUrl: r.pdf_url ?? undefined,
+        publishedAt: r.published_at ?? undefined,
+        createdAt: r.created_at,
+        updatedAt: r.updated_at,
+      };
+      return enrichArticleWithRelations(a);
+    })
+  );
+  return articles;
 }
 
-export async function getArticleBySlug(
-  slug: string
-): Promise<Article | undefined> {
+export async function getArticleBySlug(slug: string): Promise<Article | undefined> {
   return findBy<Article>("articles", "slug", slug);
 }
 
-export async function getArticleById(
-  id: string
-): Promise<Article | undefined> {
+export async function getArticleById(id: string): Promise<Article | undefined> {
   return findById<Article>("articles", id);
 }
 
@@ -88,14 +130,12 @@ export async function getCategories(): Promise<Category[]> {
   return findAll<Category>("categories", { orderBy: "sort_order ASC" });
 }
 
-export async function getCategoryBySlug(
-  slug: string
-): Promise<Category | undefined> {
+export async function getCategoryBySlug(slug: string): Promise<Category | undefined> {
   return findBy<Category>("categories", "slug", slug);
 }
 
 export async function getTags(): Promise<Tag[]> {
-  const rows = dbGetTags({ orderBy: "name_fr ASC" });
+  const rows = await dbGetTags({ orderBy: "name_fr ASC" });
   return rows.map(mapTagRow);
 }
 
@@ -106,21 +146,54 @@ export async function getRelatedArticles(
 ): Promise<Article[]> {
   if (categoryIds.length === 0) return [];
 
-  const db = getDb();
-  const placeholders = categoryIds.map(() => "?").join(", ");
-  const sql = `
-    SELECT DISTINCT a.* FROM articles a
-    JOIN article_categories ac ON a.id = ac.article_id
-    WHERE ac.category_id IN (${placeholders})
-      AND a.id != ?
-      AND a.status = 'published'
-    ORDER BY a.published_at DESC
-    LIMIT ?
-  `;
+  const { data: artIds } = await supabase
+    .from("article_categories")
+    .select("article_id")
+    .in("category_id", categoryIds)
+    .neq("article_id", articleId);
 
-  const params: unknown[] = [...categoryIds, articleId, limit];
-  const rows = db.prepare(sql).all(...params) as ArticleRow[];
-  return rows.map((r) => makeArticle(r, db));
+  if (!artIds || artIds.length === 0) return [];
+
+  const uniqueIds = [...new Set((artIds as { article_id: string }[]).map((r) => r.article_id))];
+  const takenIds = uniqueIds.slice(0, limit);
+
+  const { data: rows } = await supabase
+    .from("articles")
+    .select("*")
+    .in("id", takenIds)
+    .eq("status", "published")
+    .order("published_at", { ascending: false });
+
+  if (!rows) return [];
+
+  const articles = await Promise.all(
+    (rows as ArticleRow[]).map((r) => {
+      const a = {
+        id: r.id,
+        slug: r.slug,
+        title: { fr: r.title_fr, ar: r.title_ar },
+        content: { fr: r.content_fr, ar: r.content_ar },
+        excerpt: { fr: r.excerpt_fr ?? "", ar: r.excerpt_ar ?? "" },
+        coverImage: r.cover_image ?? undefined,
+        categoryIds: [],
+        tagIds: undefined,
+        authorId: r.author_id,
+        authorName: undefined,
+        status: r.status,
+        views: r.views ?? 0,
+        readingTime: r.reading_time ?? 0,
+        isFeatured: r.is_featured === 1,
+        audioUrl: r.audio_url ?? undefined,
+        videoUrl: r.video_url ?? undefined,
+        pdfUrl: r.pdf_url ?? undefined,
+        publishedAt: r.published_at ?? undefined,
+        createdAt: r.created_at,
+        updatedAt: r.updated_at,
+      };
+      return enrichArticleWithRelations(a);
+    })
+  );
+  return articles;
 }
 
 export async function searchArticles(

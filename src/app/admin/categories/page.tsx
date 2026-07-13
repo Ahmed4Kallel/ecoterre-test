@@ -9,8 +9,8 @@ export default async function AdminCategoriesPage() {
   if (!user) redirect("/admin/login");
   if (!requireAdmin(user)) redirect("/admin");
 
-  const categories = findAll<Category>("categories");
-  const articles = findAll<Article>("articles");
+  const categories = await findAll<Category>("categories");
+  const articles = await findAll<Article>("articles");
 
   categories.sort((a, b) => a.order - b.order);
 

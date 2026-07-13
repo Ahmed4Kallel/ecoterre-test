@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { findAll, insert } from "@/lib/db";
 import { generateId, slugify } from "@/lib/utils";
 import { getSession, requireAdmin } from "@/lib/auth";
-import { isVercel } from "@/lib/database";
 import type { Category, Article } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
@@ -10,11 +9,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const withCounts = searchParams.get("withCounts") === "true";
 
-    const categories = findAll<Category>("categories");
+    const categories = await findAll<Category>("categories");
     categories.sort((a, b) => a.order - b.order);
 
     if (withCounts) {
-      const articles = findAll<Article>("articles");
+      const articles = await findAll<Article>("articles");
       const result = categories.map((cat) => ({
         ...cat,
         articleCount: articles.filter(
@@ -40,17 +39,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La création de catégories n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const body = await request.json();
     const slug = body.slug || slugify(body.name?.fr || "category");
 
-    const allCategories = findAll<Category>("categories");
+    const allCategories = await findAll<Category>("categories");
     const duplicate = allCategories.find((c) => c.slug === slug);
     if (duplicate) {
       return NextResponse.json(
@@ -73,7 +65,7 @@ export async function POST(request: NextRequest) {
       order: body.order ?? maxOrder + 1,
     };
 
-    insert("categories", category);
+    await insert("categories", category);
     return NextResponse.json({ category }, { status: 201 });
   } catch (e) {
     return NextResponse.json(

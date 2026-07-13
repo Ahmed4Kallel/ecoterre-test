@@ -8,7 +8,7 @@ export default async function AdminProfilePage() {
   const user = await getSession();
   if (!user) redirect("/admin/login");
 
-  const articles = findAll<Article>("articles");
+  const articles = await findAll<Article>("articles");
   const userArticles = articles.filter((a) => a.authorId === user.id);
   const publishedCount = userArticles.filter((a) => a.status === "published").length;
 

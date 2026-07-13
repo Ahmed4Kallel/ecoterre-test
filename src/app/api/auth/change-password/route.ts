@@ -1,19 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, setSession, hashPassword, verifyPassword } from "@/lib/auth";
-import { getDb, isVercel } from "@/lib/database";
+import { supabase } from "@/lib/database";
 
 export async function POST(request: NextRequest) {
   try {
     const user = await getSession();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "Le changement de mot de passe n'est pas disponible en démo. Contactez l'administrateur." },
-        { status: 400 }
-      );
     }
 
     const { currentPassword, newPassword } = await request.json();
@@ -42,12 +35,11 @@ export async function POST(request: NextRequest) {
     const hashed = hashPassword(newPassword);
     const now = new Date().toISOString();
 
-    const db = getDb();
-    db.prepare("UPDATE users SET password = ?, updated_at = ? WHERE id = ?").run(
-      hashed,
-      now,
-      user.id
-    );
+    const { error } = await supabase
+      .from("users")
+      .update({ password: hashed, updated_at: now })
+      .eq("id", user.id);
+    if (error) throw error;
 
     const updatedUser = { ...user, password: hashed };
     await setSession(updatedUser);

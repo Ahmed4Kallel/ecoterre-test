@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getComments, createComment } from "@/lib/db";
 import { isValidEmail, sanitizeText, sanitizeHtmlInput } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { isVercel } from "@/lib/database";
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +9,7 @@ export async function GET(request: NextRequest) {
     const articleId = searchParams.get("article_id") || undefined;
     const status = searchParams.get("status") || "approved";
 
-    const comments = getComments(articleId, status);
+    const comments = await getComments(articleId, status);
     return NextResponse.json({ comments });
   } catch (e) {
     return NextResponse.json(
@@ -22,10 +21,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    if (isVercel()) {
-      return NextResponse.json({ error: "Les commentaires ne sont pas disponibles en démo." }, { status: 400 });
-    }
-
     const { blocked, response, headers } = checkRateLimit(request, { limit: 10, windowMs: 60_000 });
     if (blocked && response) return response;
 
@@ -59,7 +54,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const comment = createComment({
+    const comment = await createComment({
       article_id: body.article_id,
       author_name: sanitizeText(body.author_name),
       author_email: body.author_email ? body.author_email.trim().toLowerCase() : "",

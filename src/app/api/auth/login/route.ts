@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = findBy("users", "email", email) as User | undefined;
+    const user = (await findBy("users", "email", email)) as User | undefined;
     if (!user) {
       return NextResponse.json(
         { error: "Invalid email or password" },

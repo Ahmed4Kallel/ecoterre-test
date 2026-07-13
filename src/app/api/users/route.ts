@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const users = findAll<User>("users").map((u) => {
+    const users = (await findAll<User>("users")).map((u) => {
       const { password: _, ...safe } = u;
       return safe;
     });
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existing = findBy("users", "email", body.email) as User | undefined;
+    const existing = (await findBy("users", "email", body.email)) as User | undefined;
     if (existing) {
       return NextResponse.json(
         { error: "Email already in use" },
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    insert("users", newUser as unknown as Record<string, unknown>);
+    await insert("users", newUser as unknown as Record<string, unknown>);
 
     const { password: _, ...safe } = newUser;
     return NextResponse.json({ user: safe }, { status: 201 });

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getTags, createTag } from "@/lib/db";
 import { getSession, requireAdmin } from "@/lib/auth";
-import { isVercel } from "@/lib/database";
 import { slugify } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
@@ -9,7 +8,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const sort = searchParams.get("sort") || "name_fr";
 
-    const tags = getTags({ orderBy: sort });
+    const tags = await getTags({ orderBy: sort });
     return NextResponse.json({ tags });
   } catch (e) {
     return NextResponse.json(
@@ -26,13 +25,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La création de tags n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const body = await request.json();
     const nameFr = body.name?.fr || body.nameFr || "";
     const nameAr = body.name?.ar || body.nameAr || "";
@@ -45,7 +37,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const tag = createTag({
+    const tag = await createTag({
       slug,
       name: { fr: nameFr, ar: nameAr },
     });

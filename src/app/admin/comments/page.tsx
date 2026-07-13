@@ -9,8 +9,8 @@ export default async function CommentsPage() {
   if (!user) redirect("/admin/login");
   if (!requireAdmin(user)) redirect("/admin");
 
-  const comments = findAll<Comment>("comments");
-  const articles = findAll<Article>("articles");
+  const comments = await findAll<Comment>("comments");
+  const articles = await findAll<Article>("articles");
 
   const enriched = comments
     .map((c) => {

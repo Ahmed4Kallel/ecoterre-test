@@ -9,7 +9,7 @@ export default async function NewArticlePage() {
   if (!user) redirect("/admin/login");
   if (!requireAuthor(user)) redirect("/admin");
 
-  const categories = findAll<Category>("categories");
+  const categories = await findAll<Category>("categories");
 
   return <ArticleEditor categories={categories} />;
 }

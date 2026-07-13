@@ -14,7 +14,7 @@ export default async function EditCategoryPage({ params }: PageProps) {
   if (!requireAdmin(user)) redirect("/admin");
 
   const { id } = await params;
-  const category = findById<Category>("categories", id);
+  const category = await findById<Category>("categories", id);
 
   if (!category) notFound();
 

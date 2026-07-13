@@ -26,7 +26,7 @@ export async function getSession(): Promise<User | null> {
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) return null;
   const [userId, storedHash] = token.split(".");
-  const user = findBy<User>("users", "id", userId);
+  const user = await findBy<User>("users", "id", userId);
   if (!user) return null;
   const expected = sessionHash(user.id + user.password);
   if (storedHash !== expected) return null;
@@ -58,7 +58,7 @@ export function requireAuthor(user: User | null): boolean {
   return user?.role === "admin" || user?.role === "author" || user?.role === "editor";
 }
 
-export function getAllUsers(): User[] {
+export async function getAllUsers(): Promise<User[]> {
   return findAll<User>("users");
 }
 

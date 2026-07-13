@@ -1,14 +1,16 @@
 import type { MetadataRoute } from "next";
-import type { Article, Category, Tag } from "@/lib/types";
-import { getDb } from "@/lib/database";
+import type { Article, Category } from "@/lib/types";
+import { getTags } from "@/lib/db";
 import articlesData from "@/data/articles.json";
 import categoriesData from "@/data/categories.json";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ecoterre.tn";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articles = articlesData as Article[];
   const categories = categoriesData as Category[];
+  const tagRows = await getTags();
+  const tags = tagRows.map((t) => ({ slug: t.slug, name: { fr: t.name_fr, ar: t.name_ar } }));
   const published = articles.filter((a) => a.status === "published");
 
   const entries: MetadataRoute.Sitemap = [];
@@ -70,9 +72,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       });
     }
   }
-
-  const db = getDb();
-  const tags = db.prepare("SELECT * FROM tags").all() as Tag[];
 
   for (const tag of tags) {
     for (const locale of locales) {

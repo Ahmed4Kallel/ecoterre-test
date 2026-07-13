@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { getDb, isVercel } from "@/lib/database";
+import { supabase } from "@/lib/database";
 
 export async function PUT(request: NextRequest) {
   try {
@@ -9,41 +9,22 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La modification du profil n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const body = await request.json();
-    const db = getDb();
     const now = new Date().toISOString();
-    const updates: string[] = [];
-    const params: unknown[] = [];
+    const updates: Record<string, unknown> = {};
 
-    if (body.name !== undefined) {
-      updates.push("name = ?");
-      params.push(body.name);
-    }
-    if (body.avatar !== undefined) {
-      updates.push("avatar = ?");
-      params.push(body.avatar);
-    }
-    if (body.bio !== undefined) {
-      updates.push("bio = ?");
-      params.push(body.bio);
-    }
+    if (body.name !== undefined) updates.name = body.name;
+    if (body.avatar !== undefined) updates.avatar = body.avatar;
+    if (body.bio !== undefined) updates.bio = body.bio;
 
-    if (updates.length === 0) {
+    if (Object.keys(updates).length === 0) {
       return NextResponse.json({ error: "No fields to update" }, { status: 400 });
     }
 
-    updates.push("updated_at = ?");
-    params.push(now);
-    params.push(user.id);
+    updates.updated_at = now;
 
-    db.prepare(`UPDATE users SET ${updates.join(", ")} WHERE id = ?`).run(...params);
+    const { error } = await supabase.from("users").update(updates).eq("id", user.id);
+    if (error) throw error;
 
     return NextResponse.json({ success: true });
   } catch (e) {

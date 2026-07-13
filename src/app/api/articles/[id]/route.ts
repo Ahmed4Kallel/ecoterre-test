@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { findById, update, remove, incrementArticleViews, getArticleTags, logArticleView } from "@/lib/db";
 import { slugify } from "@/lib/utils";
 import { getSession, requireAuthor } from "@/lib/auth";
-import { isVercel } from "@/lib/database";
 import type { Article } from "@/lib/types";
 
 export async function GET(
@@ -11,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const article = findById<Article>("articles", id);
+    const article = await findById<Article>("articles", id);
     if (!article) {
       return NextResponse.json(
         { error: "Article not found" },
@@ -19,16 +18,16 @@ export async function GET(
       );
     }
 
-    incrementArticleViews(id);
+    await incrementArticleViews(id);
 
     const ipAddress =
       request.headers.get("x-forwarded-for") ||
       request.headers.get("x-real-ip") ||
       undefined;
     const userAgent = request.headers.get("user-agent") || undefined;
-    logArticleView(id, ipAddress, userAgent);
+    await logArticleView(id, ipAddress, userAgent);
 
-    const tags = getArticleTags(id);
+    const tags = await getArticleTags(id);
 
     return NextResponse.json({
       article,
@@ -52,15 +51,8 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La modification d'articles n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const { id } = await params;
-    const article = findById<Article>("articles", id);
+    const article = await findById<Article>("articles", id);
     if (!article) {
       return NextResponse.json(
         { error: "Article not found" },
@@ -103,7 +95,7 @@ export async function PUT(
     if (body.readingTime !== undefined) updates.readingTime = body.readingTime;
     if (body.isFeatured !== undefined) updates.isFeatured = body.isFeatured;
 
-    const updated = update("articles", id, updates);
+    const updated = await update("articles", id, updates);
     return NextResponse.json({ article: updated });
   } catch (e) {
     return NextResponse.json(
@@ -123,15 +115,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La suppression d'articles n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const { id } = await params;
-    const article = findById<Article>("articles", id);
+    const article = await findById<Article>("articles", id);
     if (!article) {
       return NextResponse.json(
         { error: "Article not found" },
@@ -143,7 +128,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    remove("articles", id);
+    await remove("articles", id);
     return NextResponse.json({ success: true });
   } catch (e) {
     return NextResponse.json(

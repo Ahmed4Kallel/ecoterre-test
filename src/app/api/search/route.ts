@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const articles = searchArticles(q, locale, {
+    const articles = await searchArticles(q, locale, {
       where: { status },
       limit,
       offset,

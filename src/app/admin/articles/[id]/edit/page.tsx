@@ -15,7 +15,7 @@ export default async function EditArticlePage({ params }: PageProps) {
   if (!requireAuthor(user)) redirect("/admin");
 
   const { id } = await params;
-  const article = findById<Article>("articles", id);
+  const article = await findById<Article>("articles", id);
 
   if (!article) notFound();
 
@@ -23,7 +23,7 @@ export default async function EditArticlePage({ params }: PageProps) {
     redirect("/admin/articles");
   }
 
-  const categories = findAll<Category>("categories");
+  const categories = await findAll<Category>("categories");
 
   return <ArticleEditor article={article} categories={categories} />;
 }

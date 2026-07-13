@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { findAll, findById, update, remove } from "@/lib/db";
 import { slugify } from "@/lib/utils";
 import { getSession, requireAdmin } from "@/lib/auth";
-import { isVercel } from "@/lib/database";
 import type { Category } from "@/lib/types";
 
 export async function GET(
@@ -11,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const category = findById<Category>("categories", id);
+    const category = await findById<Category>("categories", id);
     if (!category) {
       return NextResponse.json(
         { error: "Category not found" },
@@ -37,15 +36,8 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La modification de catégories n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const { id } = await params;
-    const category = findById<Category>("categories", id);
+    const category = await findById<Category>("categories", id);
     if (!category) {
       return NextResponse.json(
         { error: "Category not found" },
@@ -56,7 +48,7 @@ export async function PUT(
     const body = await request.json();
 
     if (body.slug && body.slug !== category.slug) {
-      const allCategories = findAll<Category>("categories");
+      const allCategories = await findAll<Category>("categories");
       const duplicate = allCategories.find(
         (c) => c.id !== id && c.slug === body.slug
       );
@@ -79,7 +71,7 @@ export async function PUT(
     if (body.icon !== undefined) updates.icon = body.icon;
     if (body.order !== undefined) updates.order = body.order;
 
-    const updated = update("categories", id, updates);
+    const updated = await update("categories", id, updates);
     return NextResponse.json({ category: updated });
   } catch (e) {
     return NextResponse.json(
@@ -99,15 +91,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La suppression de catégories n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const { id } = await params;
-    const deleted = remove("categories", id);
+    const deleted = await remove("categories", id);
     if (!deleted) {
       return NextResponse.json(
         { error: "Category not found" },

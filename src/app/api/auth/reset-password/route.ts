@@ -1,25 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDb, isVercel } from "@/lib/database";
+import { supabase } from "@/lib/database";
 import { hashPassword } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
-interface ResetTokenRow {
-  id: string;
-  user_id: string;
-  token: string;
-  expires_at: string;
-  used: number;
-}
-
 export async function POST(request: NextRequest) {
   try {
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La réinitialisation du mot de passe n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const { blocked, response, headers } = checkRateLimit(request, {
       limit: 5,
       windowMs: 60_000,
@@ -49,11 +34,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const db = getDb();
-
-    const tokenRow = db
-      .prepare("SELECT * FROM password_reset_tokens WHERE token = ?")
-      .get(token) as ResetTokenRow | undefined;
+    const { data: tokenRow } = await supabase
+      .from("password_reset_tokens")
+      .select("*")
+      .eq("token", token)
+      .maybeSingle();
 
     if (!tokenRow) {
       return NextResponse.json(
@@ -79,13 +64,8 @@ export async function POST(request: NextRequest) {
 
     const hashed = hashPassword(password);
 
-    db.prepare("UPDATE users SET password = ?, updated_at = ? WHERE id = ?").run(
-      hashed,
-      now,
-      tokenRow.user_id
-    );
-
-    db.prepare("UPDATE password_reset_tokens SET used = 1 WHERE id = ?").run(tokenRow.id);
+    await supabase.from("users").update({ password: hashed, updated_at: now }).eq("id", tokenRow.user_id);
+    await supabase.from("password_reset_tokens").update({ used: 1 }).eq("id", tokenRow.id);
 
     return NextResponse.json({ success: true }, { headers });
   } catch (e) {

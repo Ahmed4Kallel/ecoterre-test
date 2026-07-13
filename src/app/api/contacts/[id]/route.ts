@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireAdmin } from "@/lib/auth";
 import { remove } from "@/lib/db";
-import { getDb, isVercel } from "@/lib/database";
+import { supabase } from "@/lib/database";
 
 export async function PATCH(
   request: NextRequest,
@@ -13,18 +13,15 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La modification des contacts n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const { id } = await params;
     const body = await request.json();
 
-    const db = getDb();
-    db.prepare("UPDATE contacts SET is_read = ? WHERE id = ?").run(body.read ? 1 : 0, id);
+    const { error } = await supabase
+      .from("contacts")
+      .update({ is_read: body.read ? 1 : 0 })
+      .eq("id", id);
+    if (error) throw error;
+
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Failed to update contact" }, { status: 500 });
@@ -41,16 +38,9 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La suppression des contacts n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const { id } = await params;
 
-    remove("contacts", id);
+    await remove("contacts", id);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Failed to delete contact" }, { status: 500 });

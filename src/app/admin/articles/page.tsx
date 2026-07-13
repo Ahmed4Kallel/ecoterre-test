@@ -17,7 +17,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
   const { page, status } = await searchParams;
   const currentPage = Math.max(1, parseInt(page || "1", 10) || 1);
 
-  let articles = findAll<Article>("articles");
+  let articles = await findAll<Article>("articles");
 
   if (status === "published" || status === "draft") {
     articles = articles.filter((a) => a.status === status);

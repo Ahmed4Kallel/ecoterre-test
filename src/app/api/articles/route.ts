@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { findAll, insert, getArticleIdsByTagSlug } from "@/lib/db";
 import { generateId, slugify } from "@/lib/utils";
 import { getSession, requireAuthor } from "@/lib/auth";
-import { isVercel } from "@/lib/database";
 import type { Article } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
@@ -22,7 +21,7 @@ export async function GET(request: NextRequest) {
     if (status) where.status = status;
     if (author) where.author_id = author;
 
-    let articles = findAll<Article>("articles", {
+    let articles = await findAll<Article>("articles", {
       where,
       orderBy:
         sort === "published_at"
@@ -39,7 +38,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (tag) {
-      const tagArticleIds = getArticleIdsByTagSlug(tag);
+      const tagArticleIds = await getArticleIdsByTagSlug(tag);
       articles = articles.filter((a) => tagArticleIds.includes(a.id));
     }
 
@@ -81,13 +80,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (isVercel()) {
-      return NextResponse.json(
-        { error: "La création d'articles n'est pas disponible en démo." },
-        { status: 400 }
-      );
-    }
-
     const body = await request.json();
     const now = new Date().toISOString();
     const id = generateId();
@@ -113,7 +105,7 @@ export async function POST(request: NextRequest) {
       updatedAt: now,
     };
 
-    insert("articles", article);
+    await insert("articles", article);
     return NextResponse.json({ article }, { status: 201 });
   } catch (e) {
     return NextResponse.json(

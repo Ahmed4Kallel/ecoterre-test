@@ -2,14 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { subscribeNewsletter, unsubscribeNewsletter } from "@/lib/db";
 import { isValidEmail } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { isVercel } from "@/lib/database";
 
 export async function POST(request: NextRequest) {
   try {
-    if (isVercel()) {
-      return NextResponse.json({ error: "La newsletter n'est pas disponible en démo." }, { status: 400 });
-    }
-
     const { blocked, response, headers } = checkRateLimit(request, { limit: 5, windowMs: 60_000 });
     if (blocked && response) return response;
 
@@ -30,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === "unsubscribe") {
-      const success = unsubscribeNewsletter(email.trim().toLowerCase());
+      const success = await unsubscribeNewsletter(email.trim().toLowerCase());
       return NextResponse.json({
         success,
         message: success
@@ -39,7 +34,7 @@ export async function POST(request: NextRequest) {
       }, { headers });
     }
 
-    const subscriber = subscribeNewsletter(email.trim().toLowerCase());
+    const subscriber = await subscribeNewsletter(email.trim().toLowerCase());
     return NextResponse.json(
       {
         success: true,

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Article ID is required" }, { status: 400 });
     }
 
-    const articles = findAll<Article>("articles");
+    const articles = await findAll<Article>("articles");
     const article = articles.find((a) => a.id === articleId);
 
     if (!article) {
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     const currentCount = article.downloadCount || 0;
-    update("articles", articleId, {
+    await update("articles", articleId, {
       downloadCount: currentCount + 1,
       updatedAt: new Date().toISOString(),
     });

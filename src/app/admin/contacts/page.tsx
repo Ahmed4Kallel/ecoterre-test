@@ -9,7 +9,7 @@ export default async function ContactsPage() {
   if (!user) redirect("/admin/login");
   if (!requireAdmin(user)) redirect("/admin");
 
-  const messages = findAll<ContactMessage>("contacts").sort(
+  const messages = (await findAll<ContactMessage>("contacts")).sort(
     (a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );

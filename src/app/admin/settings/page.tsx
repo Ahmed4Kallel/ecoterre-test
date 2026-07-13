@@ -9,7 +9,7 @@ export default async function SettingsPage() {
   if (!user) redirect("/admin/login");
   if (!requireAdmin(user)) redirect("/admin");
 
-  const settings = findAll<SiteSetting>("settings");
+  const settings = await findAll<SiteSetting>("settings");
   const settingsMap: Record<string, string> = {};
   for (const s of settings) {
     settingsMap[s.key] = s.value;

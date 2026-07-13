@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/database";
+import { supabase } from "@/lib/database";
 import { checkRateLimit } from "@/lib/rate-limit";
 import crypto from "crypto";
 
@@ -20,20 +20,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const db = getDb();
-    const user = db
-      .prepare("SELECT id FROM users WHERE email = ?")
-      .get(email) as { id: string } | undefined;
+    const { data: user } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
 
     if (user) {
       const token = crypto.randomUUID();
       const id = crypto.randomUUID();
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
-      db.prepare(
-        `INSERT INTO password_reset_tokens (id, user_id, token, expires_at, used) VALUES (?, ?, ?, ?, 0)`
-      ).run(id, user.id, token, expiresAt);
-
+      await supabase.from("password_reset_tokens").insert({
+        id,
+        user_id: user.id,
+        token,
+        expires_at: expiresAt,
+        used: 0,
+      });
     }
 
     return NextResponse.json(
