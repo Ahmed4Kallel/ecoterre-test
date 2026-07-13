@@ -1,0 +1,26 @@
+[
+  {
+    "id": "user_admin_001",
+    "email": "admin@ecoterre.com",
+    "password": "ec_1jk3hg_5",
+    "name": "Administrateur",
+    "role": "admin",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "user_author_001",
+    "email": "auteur1@ecoterre.com",
+    "password": "ec_1jk3hg_5",
+    "name": "Ahmed Ben Salah",
+    "role": "author",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "user_author_002",
+    "email": "auteur2@ecoterre.com",
+    "password": "ec_1jk3hg_5",
+    "name": "Leila Mansouri",
+    "role": "author",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  }
+]

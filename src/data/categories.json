@@ -1,0 +1,50 @@
+[
+  {
+    "id": "cat_news",
+    "slug": "actualites",
+    "name": { "fr": "Actualités", "ar": "أخبار" },
+    "description": { "fr": "Actualités générales et informations de dernière minute", "ar": "أخبار عامة وآخر المستجدات" },
+    "icon": "newspaper",
+    "order": 1
+  },
+  {
+    "id": "cat_economy",
+    "slug": "economie",
+    "name": { "fr": "Économie", "ar": "اقتصاد" },
+    "description": { "fr": "Actualités économiques, finances et développement", "ar": "أخبار اقتصادية ومالية وتنموية" },
+    "icon": "chart-line",
+    "order": 2
+  },
+  {
+    "id": "cat_environment",
+    "slug": "environnement",
+    "name": { "fr": "Environnement", "ar": "بيئة" },
+    "description": { "fr": "Environnement, écologie et développement durable", "ar": "بيئة وإيكولوجيا وتنمية مستدامة" },
+    "icon": "leaf",
+    "order": 3
+  },
+  {
+    "id": "cat_health",
+    "slug": "sante",
+    "name": { "fr": "Santé", "ar": "صحة" },
+    "description": { "fr": "Santé publique, bien-être et médecine", "ar": "صحة عامة ورفاه وطب" },
+    "icon": "heart-pulse",
+    "order": 4
+  },
+  {
+    "id": "cat_reports",
+    "slug": "rapports",
+    "name": { "fr": "Rapports", "ar": "تقارير" },
+    "description": { "fr": "Rapports, études et analyses approfondies", "ar": "تقارير ودراسات وتحليلات معمقة" },
+    "icon": "file-text",
+    "order": 5
+  },
+  {
+    "id": "cat_podcast",
+    "slug": "podcast",
+    "name": { "fr": "Podcast", "ar": "بودكاست" },
+    "description": { "fr": "Émissions audio et podcasts", "ar": "برامج صوتية وبودكاست" },
+    "icon": "podcast",
+    "order": 6
+  }
+]

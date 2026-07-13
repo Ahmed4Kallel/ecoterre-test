@@ -1,0 +1,56 @@
+[
+  {
+    "id": "art_001",
+    "slug": "lancement-programme-energies-renouvelables-tunisie",
+    "title": { "fr": "Lancement d'un programme national d'énergies renouvelables en Tunisie", "ar": "إطلاق برنامج وطني للطاقات المتجددة في تونس" },
+    "content": {
+      "fr": "<h2>Un plan ambitieux pour 2030</h2><p>Le gouvernement tunisien a annoncé ce lundi le lancement d'un vaste programme national d'énergies renouvelables visant à atteindre 35% de la production électrique d'ici 2030.</p><p>Ce programme, doté d'un budget de 5 milliards de dinars, prévoit l'installation de centrales solaires dans le sud du pays ainsi que des parcs éoliens le long de la côte nord.</p><blockquote>« La Tunisie s'engage résolument dans la transition énergétique. Ce programme créera plus de 10 000 emplois directs et positionnera notre pays comme un leader régional des énergies propres », a déclaré le ministre de l'Énergie.</blockquote><p>Le plan inclut également des incitations pour les particuliers souhaitant installer des panneaux solaires sur leurs toits, avec des subventions couvrant jusqu'à 30% du coût d'installation.</p><h3>Partenariats internationaux</h3><p>Plusieurs partenaires internationaux, dont la Banque Mondiale et l'Union Européenne, ont déjà exprimé leur soutien au programme. Des accords de financement sont en cours de finalisation.</p>",
+      "ar": "<h2>خطة طموحة لعام 2030</h2><p>أعلنت الحكومة التونسية اليوم الاثنين عن إطلاق برنامج وطني شامل للطاقات المتجددة يهدف إلى الوصول إلى 35% من إنتاج الكهرباء بحلول عام 2030.</p><p>ويخصص لهذا البرنامج ميزانية قدرها 5 مليارات دينار، ويتضمن تركيب محطات للطاقة الشمسية في جنوب البلاد ومزارع رياح على طول الساحل الشمالي.</p><blockquote>« تونس تلتزم بقوة بالتحول الطاقي. هذا البرنامج سيخلق أكثر من 10000 وظيفة مباشرة ويضع بلدنا كقائد إقليمي في الطاقات النظيفة »، صرح وزير الطاقة.</blockquote><p>تتضمن الخطة أيضاً حوافز للأفراد الراغبين في تركيب ألواح شمسية على أسطح منازلهم، مع إعانات تغطي حتى 30% من تكلفة التركيب.</p><h3>شراكات دولية</h3><p>أعرب العديد من الشركاء الدوليين، بمن فيهم البنك الدولي والاتحاد الأوروبي، عن دعمهم للبرنامج. وتجري حالياً مفاوضات لوضع اللمسات الأخيرة على اتفاقيات التمويل.</p>"
+    },
+    "excerpt": { "fr": "La Tunisie lance un programme ambitieux de 5 milliards de dinars pour atteindre 35% d'énergies renouvelables d'ici 2030.", "ar": "تونس تطلق برنامجاً طموحاً بقيمة 5 مليارات دينار للوصول إلى 35% من الطاقات المتجددة بحلول 2030." },
+    "coverImage": "/uploads/solar-energy.jpg",
+    "categoryIds": ["cat_news", "cat_environment", "cat_economy"],
+    "authorId": "user_author_001",
+    "authorName": "Ahmed Ben Salah",
+    "status": "published",
+    "publishedAt": "2026-07-10T08:00:00.000Z",
+    "createdAt": "2026-07-10T07:00:00.000Z",
+    "updatedAt": "2026-07-10T08:00:00.000Z"
+  },
+  {
+    "id": "art_002",
+    "slug": "biodiversite-golfe-gabes-menacee",
+    "title": { "fr": "La biodiversité du Golfe de Gabès menacée par la pollution industrielle", "ar": "التنوع البيولوجي في خليج قابس مهدد بالتلوث الصناعي" },
+    "content": {
+      "fr": "<h2>Un écosystème en danger</h2><p>Une étude publiée par l'Institut National des Sciences et Technologies de la Mer (INSTM) tire la sonnette d'alarme sur l'état de la biodiversité dans le Golfe de Gabès.</p><p>Selon le rapport, les rejets industriels de phosphate ont considérablement dégradé les fonds marins, menaçant de nombreuses espèces de poissons et de crustacés endémiques à la région.</p><p>« La situation est critique mais pas irréversible. Des mesures urgentes de dépollution et de régulation des rejets industriels sont nécessaires », explique Dr. Samira Jebali, biologiste marine à l'INSTM.</p><p>Les pêcheurs locaux confirment une baisse drastique des prises ces dernières années, passant de 200 kg par jour en moyenne à moins de 50 kg aujourd'hui.</p>",
+      "ar": "<h2>نظام بيئي في خطر</h2><p>دراسة نشرها المعهد الوطني لعلوم وتكنولوجيا البحر تدق ناقوس الخطر حول حالة التنوع البيولوجي في خليج قابس.</p><p>وفقاً للتقرير، فإن النفايات الصناعية للفوسفات تدهورت بشكل كبير في قاع البحر، مما يهدد العديد من أنواع الأسماك والقشريات المستوطنة في المنطقة.</p><p>« الوضع حرج لكنه ليس غير قابل للعكس. هناك حاجة إلى تدابير عاجلة لمكافحة التلوث وتنظيم النفايات الصناعية »، تشرح الدكتورة سميرة الجبالي، عالمة الأحياء البحرية في المعهد.</p><p>يؤكد الصيادون المحليون انخفاضاً حاداً في المصيد في السنوات الأخيرة، من 200 كغ يومياً في المتوسط إلى أقل من 50 كغ اليوم.</p>"
+    },
+    "excerpt": { "fr": "L'INSTM alerte sur la dégradation critique de la biodiversité marine dans le Golfe de Gabès due aux rejets de phosphate.", "ar": "المعهد الوطني لعلوم وتكنولوجيا البحر يحذر من التدهور الحاد في التنوع البيولوجي البحري في خليج قابس." },
+    "coverImage": "/uploads/gabes-gulf.jpg",
+    "categoryIds": ["cat_environment", "cat_reports"],
+    "authorId": "user_author_002",
+    "authorName": "Leila Mansouri",
+    "status": "published",
+    "publishedAt": "2026-07-09T10:00:00.000Z",
+    "createdAt": "2026-07-09T09:00:00.000Z",
+    "updatedAt": "2026-07-09T10:00:00.000Z"
+  },
+  {
+    "id": "art_003",
+    "slug": "croissance-economique-tunisie-t2-2026",
+    "title": { "fr": "Croissance économique tunisienne : +2,8% au deuxième trimestre 2026", "ar": "نمو اقتصادي تونسي: +2.8% في الربع الثاني من 2026" },
+    "content": {
+      "fr": "<h2>Une reprise confirmée</h2><p>L'Institut National de la Statistique (INS) a publié ce mardi les chiffres de la croissance économique pour le deuxième trimestre 2026, affichant une progression de 2,8% par rapport à la même période en 2025.</p><p>Cette croissance est principalement tirée par le secteur agricole (+5,2%), les industries manufacturières (+3,1%) et le tourisme (+4,7%).</p><p>« Ces chiffres confirment la reprise progressive de l'économie tunisienne après plusieurs années difficiles. Le secteur touristique notamment affiche des performances remarquables », analyse Karim Hamza, économiste.</p><h3>Inflation en baisse</h3><p>Autre bonne nouvelle : l'inflation a reculé à 5,1% en juin 2026, contre 7,2% un an plus tôt, grâce à la stabilisation des prix des produits alimentaires.</p>",
+      "ar": "<h2>انتعاش مؤكد</h2><p>نشر المعهد الوطني للإحصاء اليوم الثلاثاء أرقام النمو الاقتصادي للربع الثاني من عام 2026، مسجلاً تقدماً بنسبة 2.8% مقارنة بنفس الفترة من عام 2025.</p><p>هذا النمو مدفوع بشكل رئيسي بالقطاع الفلاحي (+5.2%) والصناعات التحويلية (+3.1%) والسياحة (+4.7%).</p><p>« تؤكد هذه الأرقام الانتعاش التدريجي للاقتصاد التونسي بعد عدة سنوات صعبة. القطاع السياحي بشكل خاص يظهر أداءً ملحوظاً »، يحلل كريم حمزة، خبير اقتصادي.</p><h3>انخفاض التضخم</h3><p>خبر سار آخر: تراجع التضخم إلى 5.1% في يونيو 2026 مقابل 7.2% قبل عام، بفضل استقرار أسعار المنتجات الغذائية.</p>"
+    },
+    "excerpt": { "fr": "L'INS annonce une croissance de 2,8% au T2 2026, portée par l'agriculture, l'industrie et le tourisme. L'inflation recule à 5,1%.", "ar": "المعهد الوطني للإحصاء يعلن نمواً بنسبة 2.8% في الربع الثاني 2026، بفضل الفلاحة والصناعة والسياحة. التضخم ينخفض إلى 5.1%." },
+    "coverImage": "/uploads/economy-growth.jpg",
+    "categoryIds": ["cat_economy", "cat_news"],
+    "authorId": "user_author_001",
+    "authorName": "Ahmed Ben Salah",
+    "status": "published",
+    "publishedAt": "2026-07-08T09:00:00.000Z",
+    "createdAt": "2026-07-08T08:00:00.000Z",
+    "updatedAt": "2026-07-08T09:00:00.000Z"
+  }
+]
