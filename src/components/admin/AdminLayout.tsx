@@ -251,6 +251,16 @@ export default function AdminLayout({ user, children }: AdminLayoutProps) {
           </div>
 
           <div className="flex items-center gap-4">
+            <Link
+              href="/"
+              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+              title={t("view_site") || "Voir le site"}
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              <span className="hidden sm:inline">{t("view_site")}</span>
+            </Link>
             <span className="text-sm text-gray-600 dark:text-slate-400">
               <span>{t("welcome")}, </span>
               <span className="font-semibold text-gray-900 dark:text-slate-200">{user.name}</span>
