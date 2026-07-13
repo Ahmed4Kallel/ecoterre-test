@@ -284,14 +284,11 @@ export default function Header({ user = null, categories = [] }: HeaderProps) {
           {!user && (
             <Link
               href="/admin/login"
-              className="rounded bg-white/15 px-2 py-1 text-xs font-semibold hover:bg-white/25 transition-colors"
+              className="rounded bg-white/15 px-3 py-1.5 text-xs font-semibold hover:bg-white/25 transition-colors"
             >
               {t("login")}
             </Link>
           )}
-          <div className="w-28">
-            <SearchBar />
-          </div>
           <button
             ref={buttonRef}
             onClick={() => setMenuOpen((prev) => !prev)}
