@@ -34,7 +34,7 @@ function getStoredTheme(): Theme | null {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      return getStoredTheme() ?? getSystemTheme();
+      return getStoredTheme() ?? "light";
     }
     return "light";
   });
@@ -42,19 +42,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = () => {
-      if (!getStoredTheme()) {
-        const systemTheme = getSystemTheme();
-        setTheme(systemTheme);
-        document.documentElement.classList.toggle("dark", systemTheme === "dark");
-      }
-    };
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {

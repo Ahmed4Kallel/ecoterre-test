@@ -42,6 +42,9 @@ export default function RootLayout({
     >
       <head>
         <meta name="color-scheme" content="light dark" />
+        <script dangerouslySetInnerHTML={{
+          __html: `(function(){try{var t=localStorage.getItem("ecoterre-theme");if(t==="dark"){document.documentElement.classList.add("dark")}}catch(e){}})()`
+        }} />
       </head>
       <body className="min-h-full flex flex-col bg-white text-gray-900 dark:bg-slate-900 dark:text-slate-100">
         {children}
