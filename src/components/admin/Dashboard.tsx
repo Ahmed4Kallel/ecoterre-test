@@ -5,6 +5,8 @@ import Link from "next/link";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useLocale } from "@/lib/i18n";
 import type { Article, Category } from "@/lib/types";
+import OptimizedImage from "@/components/ui/OptimizedImage";
+import StatusBadge from "@/components/ui/StatusBadge";
 
 interface DashboardStats {
   totalArticles: number;
@@ -263,9 +265,11 @@ export default function Dashboard({ stats, recentArticles }: DashboardProps) {
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
                         {article.coverImage && (
-                          <img
+                          <OptimizedImage
                             src={article.coverImage}
                             alt=""
+                            width={40}
+                            height={40}
                             className="h-10 w-10 flex-shrink-0 rounded-lg object-cover"
                           />
                         )}
@@ -408,27 +412,6 @@ function StatCard({
       )}
       <div className={`absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r ${gradient} scale-x-0 transition-transform group-hover:scale-x-100`} />
     </motion.div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const { t } = useLocale();
-  const isPublished = status === "published";
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-        isPublished
-          ? "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-          : "bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-300"
-      }`}
-    >
-      <span
-        className={`h-1.5 w-1.5 rounded-full ${
-          isPublished ? "bg-green-500" : "bg-gray-400 dark:bg-slate-500"
-        }`}
-      />
-      {isPublished ? t("published") : t("draft")}
-    </span>
   );
 }
 

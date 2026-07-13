@@ -44,16 +44,11 @@ export async function POST(request: NextRequest) {
 
     insert("contacts", contact);
 
-    console.log(
-      `[Contact] New message from ${contact.name} <${contact.email}>: ${contact.message.slice(0, 100)}${contact.message.length > 100 ? "..." : ""}`
-    );
-
     return NextResponse.json(
       { success: true, message: "Message sent successfully" },
       { status: 201, headers }
     );
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to send message" },
       { status: 500 }

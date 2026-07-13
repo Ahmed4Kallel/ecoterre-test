@@ -245,5 +245,15 @@
   "invalid_or_expired_token": "الرابط غير صالح أو منتهي الصلاحية",
   "reset_password_success": "تم إعادة تعيين كلمة المرور. يمكنك الآن تسجيل الدخول.",
   "send_reset_link": "إرسال الرابط",
-  "change_password": "تغيير كلمة المرور"
+  "change_password": "تغيير كلمة المرور",
+  "dashboard_subtitle": "نظرة عامة على الموقع",
+  "total": "المجموع",
+  "pending": "قيد الانتظار",
+  "active": "نشط",
+  "registered": "المسجلون",
+  "all_time": "منذ البداية",
+  "awaiting": "في انتظار المراجعة",
+  "current_password": "كلمة المرور الحالية",
+  "profile_subtitle": "إدارة ملفك الشخصي",
+  "tag_not_found": "الوسم غير موجود"
 }

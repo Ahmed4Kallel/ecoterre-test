@@ -19,7 +19,6 @@ export async function GET(
     }
     return NextResponse.json({ category });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to fetch category" },
       { status: 500 }
@@ -75,7 +74,6 @@ export async function PUT(
     const updated = update("categories", id, updates);
     return NextResponse.json({ category: updated });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to update category" },
       { status: 500 }
@@ -104,7 +102,6 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to delete category" },
       { status: 500 }

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Pagination from "@/components/ui/Pagination";
 import type { Article } from "@/lib/types";
+import OptimizedImage from "@/components/ui/OptimizedImage";
+import StatusBadge from "@/components/ui/StatusBadge";
 
 interface ArticlesListProps {
   articles: Article[];
@@ -131,9 +133,11 @@ export default function ArticlesList({
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
                       {article.coverImage && (
-                        <img
+                        <OptimizedImage
                           src={article.coverImage}
                           alt=""
+                          width={40}
+                          height={40}
                           className="h-10 w-10 flex-shrink-0 rounded-lg object-cover ring-1 ring-gray-200 dark:ring-slate-700"
                         />
                       )}
@@ -204,26 +208,6 @@ export default function ArticlesList({
         />
       )}
     </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const isPublished = status === "published";
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-        isPublished
-          ? "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-          : "bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-300"
-      }`}
-    >
-      <span
-        className={`h-1.5 w-1.5 rounded-full ${
-          isPublished ? "bg-green-500" : "bg-gray-400 dark:bg-slate-500"
-        }`}
-      />
-      {isPublished ? "Publié" : "Brouillon"}
-    </span>
   );
 }
 

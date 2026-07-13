@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
     const { password: _, ...safeUser } = user;
     return NextResponse.json({ user: safeUser }, { headers });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

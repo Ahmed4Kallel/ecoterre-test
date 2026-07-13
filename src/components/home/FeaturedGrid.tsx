@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLocale } from "@/lib/i18n";
-import type { Article } from "@/lib/types";
+import type { Article, Category } from "@/lib/types";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 interface FeaturedGridProps {
   articles: Article[];
   locale: string;
+  categories?: Category[];
 }
 
 const containerVariants = {
@@ -30,6 +32,7 @@ const itemVariants = {
 export default function FeaturedGrid({
   articles,
   locale,
+  categories,
 }: FeaturedGridProps) {
   const { dir, t } = useLocale();
   const rtl = dir === "rtl";
@@ -41,9 +44,9 @@ export default function FeaturedGrid({
 
   const getTitle = (a: Article) => a.title[locale as "fr" | "ar"];
   const getExcerpt = (a: Article) => a.excerpt[locale as "fr" | "ar"];
-  const getCategoryName = (a: Article) => {
-    if (a.authorName) return a.authorName;
-    return "";
+  const getCategoryName = (article: Article): string => {
+    const cat = (categories ?? []).find((c) => article.categoryIds?.includes(c.id));
+    return cat ? cat.name[locale as "fr" | "ar"] : (locale === "fr" ? "Écologie" : "البيئة");
   };
 
   return (
@@ -53,7 +56,7 @@ export default function FeaturedGrid({
           className="text-xl font-extrabold text-green-800 sm:text-2xl"
           style={{ textAlign: rtl ? "right" : "left" }}
         >
-          À la une
+          {locale === "ar" ? "الأكثر تميزاً" : "À la une"}
         </h2>
       </div>
 
@@ -74,9 +77,10 @@ export default function FeaturedGrid({
             className="group relative flex h-full min-h-[320px] flex-col justify-end overflow-hidden rounded-xl"
           >
             {main.coverImage ? (
-              <img
+              <OptimizedImage
                 src={main.coverImage}
                 alt={getTitle(main)}
+                fill
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             ) : (
@@ -105,9 +109,10 @@ export default function FeaturedGrid({
               className="group relative flex h-full min-h-[150px] flex-col justify-end overflow-hidden rounded-xl"
             >
               {article.coverImage ? (
-                <img
+                <OptimizedImage
                   src={article.coverImage}
                   alt={getTitle(article)}
+                  fill
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               ) : (

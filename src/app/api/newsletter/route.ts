@@ -44,7 +44,6 @@ export async function POST(request: NextRequest) {
       { status: 201, headers }
     );
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to process newsletter subscription" },
       { status: 500 }

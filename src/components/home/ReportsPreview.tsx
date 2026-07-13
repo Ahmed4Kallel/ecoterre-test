@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLocale } from "@/lib/i18n";
 import type { Article } from "@/lib/types";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 interface ReportsPreviewProps {
   reports: Article[];
@@ -76,9 +77,10 @@ export default function ReportsPreview({
                 <Link href={`/${locale}/article/${report.slug}`}>
                   <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-blue-700 to-indigo-800">
                     {report.coverImage ? (
-                      <img
+                      <OptimizedImage
                         src={report.coverImage}
                         alt={title}
+                        fill
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (

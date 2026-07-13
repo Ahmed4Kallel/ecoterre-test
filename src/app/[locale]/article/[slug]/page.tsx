@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getArticleBySlug, getCategories, getRelatedArticles } from "@/lib/data";
+
+export const revalidate = 60;
 import frMessages from "@/i18n/fr/common.json";
 import arMessages from "@/i18n/ar/common.json";
 import { formatMetaTitle, formatMetaDescription, getSiteUrl, generateArticleSchema, generateBreadcrumbSchema } from "@/lib/seo";
@@ -9,12 +11,14 @@ import ShareButtons from "@/components/articles/ShareButtons";
 import TableOfContents from "@/components/articles/TableOfContents";
 import YouTubeEmbed from "@/components/articles/YouTubeEmbed";
 import PodcastPlayer from "@/components/podcasts/PodcastPlayer";
+import VideoPlayer from "@/components/articles/VideoPlayer";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import ReadingTime from "@/components/ui/ReadingTime";
 import CopyButton from "@/components/ui/CopyButton";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 import { sanitizeHtml } from "@/lib/security";
+import CommentSection from "@/components/comments/CommentSection";
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -158,7 +162,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
             </div>
 
             {article.coverImage && (
-              <div className="mb-8 max-h-[480px] w-full">
+              <div className="mb-20 max-h-[480px] w-full">
                 <OptimizedImage
                   src={article.coverImage}
                   alt={article.title[lang]}
@@ -170,8 +174,14 @@ export default async function ArticlePage({ params }: { params: Params }) {
               </div>
             )}
 
+            {article.videoUrl && (
+              <div className="mb-12">
+                <VideoPlayer url={article.videoUrl} title={article.title[lang]} />
+              </div>
+            )}
+
             {hasPodcast && article.audioUrl && (
-              <div className="mb-8">
+              <div className="mb-12">
                 <PodcastPlayer
                   audioUrl={article.audioUrl}
                   title={article.title[lang]}
@@ -181,11 +191,13 @@ export default async function ArticlePage({ params }: { params: Params }) {
             )}
 
             <div
-              className="rich-text-content mb-8 leading-relaxed text-gray-800 dark:text-slate-200"
+              className="rich-text-content pt-0.5 leading-relaxed text-gray-800 dark:text-slate-200"
               dangerouslySetInnerHTML={{ __html: contentWithIds }}
             />
 
             <hr className="my-8 border-gray-200 dark:border-slate-700" />
+
+            <CommentSection articleId={article.id} locale={locale} />
 
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-4">
@@ -207,7 +219,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
             {relatedArticles.length > 0 && (
               <section className="mt-12">
                 <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-slate-100">
-                  {locale === "ar" ? "مقالات ذات صلة" : "Articles liés"}
+                  {messages.related_articles || "Articles liés"}
                 </h2>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {relatedArticles.map((related) => (

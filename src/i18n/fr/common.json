@@ -245,5 +245,15 @@
   "invalid_or_expired_token": "Lien invalide ou expiré",
   "reset_password_success": "Mot de passe réinitialisé. Vous pouvez maintenant vous connecter.",
   "send_reset_link": "Envoyer le lien",
-  "change_password": "Changer le mot de passe"
+  "change_password": "Changer le mot de passe",
+  "dashboard_subtitle": "Aperçu général du site",
+  "total": "Total",
+  "pending": "En attente",
+  "active": "Actif",
+  "registered": "Inscrits",
+  "all_time": "Depuis le début",
+  "awaiting": "En attente de modération",
+  "current_password": "Mot de passe actuel",
+  "profile_subtitle": "Gérez votre profil",
+  "tag_not_found": "Tag introuvable"
 }

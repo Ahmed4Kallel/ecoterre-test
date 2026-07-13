@@ -32,7 +32,6 @@ export async function GET(request: NextRequest) {
       limit,
     });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to search articles" },
       { status: 500 }

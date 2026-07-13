@@ -64,6 +64,7 @@ function seed() {
       excerpt_ar TEXT DEFAULT '',
       cover_image TEXT,
       audio_url TEXT,
+      video_url TEXT,
       pdf_url TEXT,
       author_id TEXT NOT NULL REFERENCES users(id),
       status TEXT NOT NULL DEFAULT 'draft',

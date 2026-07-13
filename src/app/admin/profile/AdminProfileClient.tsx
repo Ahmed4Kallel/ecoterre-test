@@ -44,20 +44,23 @@ export default function AdminProfileClient({ user, stats }: AdminProfileClientPr
       const formData = new FormData();
       formData.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: formData });
-      if (!res.ok) throw new Error("Upload failed");
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Erreur ${res.status}`);
       setAvatarUrl(data.url);
 
-      await fetch("/api/profile", {
+      const res2 = await fetch("/api/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ avatar: data.url }),
       });
+      const data2 = await res2.json().catch(() => ({}));
+      if (!res2.ok) throw new Error(data2.error || `Erreur ${res2.status}`);
 
       setMessage("Photo de profil mise à jour");
       setMessageType("success");
-    } catch {
-      setMessage("Erreur lors du téléversement");
+    } catch (e) {
+      const errMsg = e instanceof Error ? e.message : String(e);
+      setMessage(errMsg);
       setMessageType("error");
     } finally {
       setUploadingAvatar(false);

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLocale } from "@/lib/i18n";
 import type { Article } from "@/lib/types";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 interface HeroSectionProps {
   article: Article;
@@ -26,11 +27,11 @@ export default function HeroSection({ article, locale }: HeroSectionProps) {
     <section className="relative min-h-[420px] overflow-hidden bg-gray-900 sm:min-h-[500px]" dir={dir}>
       {article.coverImage && (
         <>
-          <img
+          <OptimizedImage
             src={article.coverImage}
             alt={title}
+            fill
             className="absolute inset-0 h-full w-full object-cover opacity-60"
-            fetchPriority="high"
           />
           <motion.div
             className="absolute inset-0 bg-gradient-to-t from-green-900/95 via-green-900/60 to-transparent"

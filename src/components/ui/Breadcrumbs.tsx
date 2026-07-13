@@ -34,26 +34,8 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
   const { dir } = useLocale();
   const rtl = dir === "rtl";
 
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      item: {
-        "@id": item.href || "",
-        name: item.label,
-      },
-    })),
-  };
-
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-      />
-      <nav aria-label="Breadcrumb" className="mb-4">
+    <nav aria-label="Breadcrumb" className="mb-4">
         <motion.ol
           className="flex flex-wrap items-center gap-1 text-sm text-gray-500 dark:text-slate-400"
           variants={containerVariants}
@@ -101,7 +83,6 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
             );
           })}
         </motion.ol>
-      </nav>
-    </>
+    </nav>
   );
 }

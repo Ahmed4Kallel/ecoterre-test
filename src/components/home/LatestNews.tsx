@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLocale } from "@/lib/i18n";
 import type { Article } from "@/lib/types";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 interface LatestNewsProps {
   articles: Article[];
@@ -81,10 +82,10 @@ export default function LatestNews({ articles, locale }: LatestNewsProps) {
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-green-700 via-green-800 to-blue-900">
                   {article.coverImage ? (
-                    <img
+                    <OptimizedImage
                       src={article.coverImage}
                       alt={title}
-                      loading="lazy"
+                      fill
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (

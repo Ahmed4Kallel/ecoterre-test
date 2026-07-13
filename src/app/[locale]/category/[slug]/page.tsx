@@ -9,6 +9,8 @@ import Pagination from "@/components/ui/Pagination";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 
+export const revalidate = 60;
+
 type Params = Promise<{ locale: string; slug: string }>;
 type SearchParams = Promise<{ page?: string }>;
 

@@ -15,9 +15,10 @@ interface CommentData {
 
 interface CommentSectionProps {
   articleId: string;
+  locale?: string;
 }
 
-export default function CommentSection({ articleId }: CommentSectionProps) {
+export default function CommentSection({ articleId, locale = "fr" }: CommentSectionProps) {
   const { t, dir } = useLocale();
   const rtl = dir === "rtl";
 
@@ -90,11 +91,10 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
   }
 
   function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString("fr-TN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    return new Date(dateStr).toLocaleDateString(
+      locale === "ar" ? "ar-TN" : "fr-TN",
+      { year: "numeric", month: "long", day: "numeric" }
+    );
   }
 
   return (

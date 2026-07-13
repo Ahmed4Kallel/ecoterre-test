@@ -59,7 +59,7 @@ function openLocalDb(): DatabaseInstance {
       id TEXT PRIMARY KEY, slug TEXT UNIQUE NOT NULL, title_fr TEXT NOT NULL,
       title_ar TEXT NOT NULL, content_fr TEXT NOT NULL, content_ar TEXT NOT NULL,
       excerpt_fr TEXT DEFAULT '', excerpt_ar TEXT DEFAULT '', cover_image TEXT,
-      audio_url TEXT, pdf_url TEXT, author_id TEXT NOT NULL REFERENCES users(id),
+      audio_url TEXT, video_url TEXT, pdf_url TEXT, author_id TEXT NOT NULL REFERENCES users(id),
       status TEXT NOT NULL DEFAULT 'draft', views INTEGER NOT NULL DEFAULT 0,
       reading_time INTEGER NOT NULL DEFAULT 0, is_featured INTEGER NOT NULL DEFAULT 0,
       published_at TEXT, scheduled_at TEXT, created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -146,6 +146,27 @@ function openLocalDb(): DatabaseInstance {
     CREATE INDEX IF NOT EXISTS idx_newsletters_email ON newsletters(email);
     CREATE INDEX IF NOT EXISTS idx_views_log_article ON views_log(article_id);
   `);
+
+  try { db.exec("ALTER TABLE articles ADD COLUMN video_url TEXT"); } catch {}
+  try {
+    const existingVideoCount = (db.prepare("SELECT COUNT(*) as c FROM articles WHERE video_url IS NOT NULL").get() as { c: number }).c;
+    if (existingVideoCount === 0) {
+      const videoIds = [
+        "rzD5pR9wL4U", "M7lc1UVf-VE", "IP6Cq4J3WlI", "WZrOkfGFIq4",
+        "2KZb2_vcNTg", "6Rl4z4gVgzE", "30o4omX5qfo", "xHkqj4oE7jQ",
+        "ZXzuT5EwZFY", "n4t_-NjY_Sg", "9u7nS7O5Nps", "ciS8aCrQy88",
+        "J6o8G7v0VgY", "z3hDWG5EUY4", "vQ3Mq0K3jGY",
+      ];
+      const articles = db.prepare("SELECT id FROM articles").all() as { id: string }[];
+      const stmt = db.prepare("UPDATE articles SET video_url = ? WHERE id = ?");
+      for (const article of articles) {
+        if (Math.random() < 0.25) {
+          const vid = videoIds[Math.floor(Math.random() * videoIds.length)];
+          stmt.run(`https://www.youtube.com/watch?v=${vid}`, article.id);
+        }
+      }
+    }
+  } catch { /* migration may fail on Vercel */ }
 
   return db;
 }

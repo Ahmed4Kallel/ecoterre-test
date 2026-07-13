@@ -21,7 +21,11 @@ export function LocaleProvider({ locale, messages, children }: LocaleProviderPro
 
   const switchLocale = useCallback(
     (newLocale: Locale) => {
-      const newPathname = pathname.replace(`/${locale}/`, `/${newLocale}/`);
+      const prefix = `/${locale}`;
+      const newPrefix = `/${newLocale}`;
+      const newPathname = pathname === prefix
+        ? newPrefix
+        : pathname.replace(prefix + '/', newPrefix + '/');
       router.push(newPathname);
     },
     [locale, pathname, router]

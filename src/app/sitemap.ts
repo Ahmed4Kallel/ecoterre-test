@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import type { Article, Category } from "@/lib/types";
+import type { Article, Category, Tag } from "@/lib/types";
+import { getDb } from "@/lib/database";
 import articlesData from "@/data/articles.json";
 import categoriesData from "@/data/categories.json";
 
@@ -66,6 +67,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
             ar: `${BASE_URL}/ar/category/${category.slug}`,
           },
         },
+      });
+    }
+  }
+
+  const db = getDb();
+  const tags = db.prepare("SELECT * FROM tags").all() as Tag[];
+
+  for (const tag of tags) {
+    for (const locale of locales) {
+      entries.push({
+        url: `${BASE_URL}/${locale}/tag/${tag.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
       });
     }
   }

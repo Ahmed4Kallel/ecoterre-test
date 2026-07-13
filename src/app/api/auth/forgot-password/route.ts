@@ -34,10 +34,6 @@ export async function POST(request: NextRequest) {
         `INSERT INTO password_reset_tokens (id, user_id, token, expires_at, used) VALUES (?, ?, ?, ?, 0)`
       ).run(id, user.id, token, expiresAt);
 
-      console.log(`[PASSWORD RESET] Token for ${email}: ${token}`);
-      console.log(
-        `[PASSWORD RESET] Link: http://localhost:3000/admin/reset-password?token=${token}`
-      );
     }
 
     return NextResponse.json(
@@ -45,7 +41,6 @@ export async function POST(request: NextRequest) {
       { headers }
     );
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

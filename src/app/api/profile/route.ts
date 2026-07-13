@@ -40,7 +40,6 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to update profile" },
       { status: 500 }

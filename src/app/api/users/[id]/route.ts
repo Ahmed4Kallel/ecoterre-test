@@ -30,7 +30,6 @@ export async function DELETE(
     remove("users", id);
     return NextResponse.json({ success: true });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to delete user" },
       { status: 500 }

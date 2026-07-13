@@ -34,7 +34,6 @@ export async function GET(
       tags,
     });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to fetch article" },
       { status: 500 }
@@ -89,6 +88,7 @@ export async function PUT(
     if (body.content) updates.content = body.content;
     if (body.excerpt) updates.excerpt = body.excerpt;
     if (body.coverImage !== undefined) updates.coverImage = body.coverImage;
+    if (body.videoUrl !== undefined) updates.videoUrl = body.videoUrl;
     if (body.categoryIds !== undefined) updates.categoryIds = body.categoryIds;
     if (body.tagIds !== undefined) updates.tagIds = body.tagIds;
     if (body.status) updates.status = body.status;
@@ -98,7 +98,6 @@ export async function PUT(
     const updated = update("articles", id, updates);
     return NextResponse.json({ article: updated });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to update article" },
       { status: 500 }
@@ -132,7 +131,6 @@ export async function DELETE(
     remove("articles", id);
     return NextResponse.json({ success: true });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to delete article" },
       { status: 500 }

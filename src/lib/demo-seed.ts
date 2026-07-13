@@ -854,6 +854,24 @@ function generateContent(index: number): {
   return { contentFr, contentAr, excerptFr, excerptAr };
 }
 
+const videoUrls = [
+  "https://www.youtube.com/watch?v=rzD5pR9wL4U",
+  "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+  "https://www.youtube.com/watch?v=IP6Cq4J3WlI",
+  "https://www.youtube.com/watch?v=WZrOkfGFIq4",
+  "https://www.youtube.com/watch?v=2KZb2_vcNTg",
+  "https://www.youtube.com/watch?v=6Rl4z4gVgzE",
+  "https://www.youtube.com/watch?v=30o4omX5qfo",
+  "https://www.youtube.com/watch?v=xHkqj4oE7jQ",
+  "https://www.youtube.com/watch?v=ZXzuT5EwZFY",
+  "https://www.youtube.com/watch?v=n4t_-NjY_Sg",
+  "https://www.youtube.com/watch?v=9u7nS7O5Nps",
+  "https://www.youtube.com/watch?v=ciS8aCrQy88",
+  "https://www.youtube.com/watch?v=J6o8G7v0VgY",
+  "https://www.youtube.com/watch?v=z3hDWG5EUY4",
+  "https://www.youtube.com/watch?v=vQ3Mq0K3jGY",
+];
+
 function generateArticleData(index: number, catMap: Map<string, string>, tagMap: Map<string, string>, authors: string[]) {
   const topicData = articleTopics[index % articleTopics.length];
   const title = topicData.titlesFr[index % topicData.titlesFr.length];
@@ -874,8 +892,10 @@ function generateArticleData(index: number, catMap: Map<string, string>, tagMap:
   const readingTime = calcReadingTime(contentFr);
   const views = randomInt(10, 5000);
   const isFeatured = index < 6 ? 1 : 0;
-  const coverImage = `https://picsum.photos/seed/${slug}/800/400`;
+  const coverImage = `/uploads/art_demo_${String(index + 1).padStart(3, "0")}.jpg`;
   const authorId = pick(authors);
+
+  const videoUrl = Math.random() < 0.25 ? pick(videoUrls) : null;
 
   return {
     id: `art_demo_${String(index + 1).padStart(3, "0")}`,
@@ -887,6 +907,7 @@ function generateArticleData(index: number, catMap: Map<string, string>, tagMap:
     excerptFr,
     excerptAr,
     coverImage,
+    videoUrl,
     authorId,
     status,
     views,
@@ -1325,8 +1346,8 @@ function seed() {
 
     console.log("[4/10] Generating 120 articles...");
     const insertArticle = db.prepare(
-      `INSERT INTO articles (id, slug, title_fr, title_ar, content_fr, content_ar, excerpt_fr, excerpt_ar, cover_image, audio_url, pdf_url, author_id, status, views, reading_time, is_featured, published_at, scheduled_at, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO articles (id, slug, title_fr, title_ar, content_fr, content_ar, excerpt_fr, excerpt_ar, cover_image, audio_url, video_url, pdf_url, author_id, status, views, reading_time, is_featured, published_at, scheduled_at, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     );
     const insertArticleCat = db.prepare(
       `INSERT INTO article_categories (article_id, category_id) VALUES (?, ?)`
@@ -1345,7 +1366,7 @@ function seed() {
 
       insertArticle.run(
         a.id, a.slug, a.titleFr, a.titleAr, a.contentFr, a.contentAr,
-        a.excerptFr, a.excerptAr, a.coverImage, null, null,
+        a.excerptFr, a.excerptAr, a.coverImage, null, a.videoUrl, null,
         a.authorId, a.status, a.views, a.readingTime, a.isFeatured,
         a.publishedAt, null, createdAt, updatedAt
       );
@@ -1373,7 +1394,8 @@ function seed() {
       const contentAr = podcastContentAr[i % podcastContentAr.length];
       const excerptFr = contentFr.replace(/<[^>]*>/g, "").slice(0, 150).trim() + "...";
       const excerptAr = contentAr.replace(/<[^>]*>/g, "").slice(0, 100).trim() + "...";
-      const coverImage = `https://picsum.photos/seed/podcast-${i + 1}/800/400`;
+      const padNum = String(i + 1).padStart(2, "0");
+      const coverImage = `/uploads/art_demo_podcast_${padNum}.jpg`;
       const audioUrl = `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${i + 1}.mp3`;
       const authorId = pick(authorIds);
       const duration = randomInt(900, 3600);
@@ -1381,7 +1403,7 @@ function seed() {
       const createdAt = publishedAt;
       const views = randomInt(100, 8000);
 
-      const podId = `art_demo_podcast_${String(i + 1).padStart(2, "0")}`;
+      const podId = `art_demo_podcast_${padNum}`;
 
       insertArticle.run(
         podId, slug, titleFr, titleAr, contentFr, contentAr,
@@ -1404,15 +1426,16 @@ function seed() {
         `INSERT INTO podcasts (id, slug, title_fr, title_ar, description_fr, description_ar, audio_url, cover_image, author_id, status, duration, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       );
+      const podTableCover = `/uploads/pod_${padNum}.jpg`;
       insertPodcast.run(
-        `pod_${String(i + 1).padStart(2, "0")}`,
+        `pod_${padNum}`,
         slug,
         titleFr,
         titleAr,
         excerptFr,
         excerptAr,
         audioUrl,
-        coverImage,
+        podTableCover,
         authorId,
         "published",
         duration,
@@ -1434,14 +1457,15 @@ function seed() {
       const contentAr = reportContentAr[i % reportContentAr.length];
       const excerptFr = reportExcerpts[i];
       const excerptAr = reportExcerpts[i].slice(0, 120).trim() + "...";
-      const coverImage = `https://picsum.photos/seed/report-${i + 1}/800/400`;
+      const padNum = String(i + 1).padStart(2, "0");
+      const coverImage = `/uploads/art_demo_report_${padNum}.jpg`;
       const pdfUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
       const authorId = pick(authorIds);
       const publishedAt = randomDate(180);
       const createdAt = publishedAt;
       const views = randomInt(200, 6000);
 
-      const repId = `art_demo_report_${String(i + 1).padStart(2, "0")}`;
+      const repId = `art_demo_report_${padNum}`;
 
       insertArticle.run(
         repId, slug, titleFr, titleAr, contentFr, contentAr,
@@ -1464,8 +1488,9 @@ function seed() {
         `INSERT INTO reports (id, slug, title_fr, title_ar, content_fr, content_ar, excerpt_fr, excerpt_ar, cover_image, pdf_url, author_id, status, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       );
+      const repTableCover = `/uploads/rep_${padNum}.jpg`;
       insertReport.run(
-        `rep_${String(i + 1).padStart(2, "0")}`,
+        `rep_${padNum}`,
         slug,
         titleFr,
         titleAr,
@@ -1473,7 +1498,7 @@ function seed() {
         contentAr,
         excerptFr,
         excerptAr,
-        coverImage,
+        repTableCover,
         pdfUrl,
         authorId,
         "published",

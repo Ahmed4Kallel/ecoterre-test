@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ categories });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to fetch categories" },
       { status: 500 }
@@ -69,7 +68,6 @@ export async function POST(request: NextRequest) {
     insert("categories", category);
     return NextResponse.json({ category }, { status: 201 });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to create category" },
       { status: 500 }

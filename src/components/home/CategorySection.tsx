@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLocale } from "@/lib/i18n";
 import type { Category, Article } from "@/lib/types";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 interface CategorySectionProps {
   category: Category;
@@ -78,9 +79,10 @@ export default function CategorySection({
             className="group relative flex h-full min-h-[280px] flex-col justify-end overflow-hidden rounded-xl"
           >
             {heroArticle.coverImage ? (
-              <img
+              <OptimizedImage
                 src={heroArticle.coverImage}
                 alt={heroArticle.title[locale as "fr" | "ar"]}
+                fill
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             ) : (
@@ -109,9 +111,10 @@ export default function CategorySection({
               className="group relative flex h-full min-h-[130px] flex-col justify-end overflow-hidden rounded-xl"
             >
               {article.coverImage ? (
-                <img
+                <OptimizedImage
                   src={article.coverImage}
                   alt={article.title[locale as "fr" | "ar"]}
+                  fill
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (

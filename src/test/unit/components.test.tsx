@@ -215,14 +215,12 @@ describe('Breadcrumbs', () => {
     expect(container.querySelector('ol')).toBeInTheDocument()
   })
 
-  it('includes structured data script', () => {
+  it('does not include structured data script (moved to page level)', () => {
     const { container } = render(
       <Breadcrumbs items={[{ label: 'Home', href: '/' }]} />
     )
     const script = container.querySelector('script[type="application/ld+json"]')
-    expect(script).toBeInTheDocument()
-    const parsed = JSON.parse(script?.textContent || '{}')
-    expect(parsed['@type']).toBe('BreadcrumbList')
+    expect(script).not.toBeInTheDocument()
   })
 })
 

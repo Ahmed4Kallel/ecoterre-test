@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLocale } from "@/lib/i18n";
 import type { Article } from "@/lib/types";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 interface PodcastsPreviewProps {
   podcasts: Article[];
@@ -61,9 +62,10 @@ export default function PodcastsPreview({
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-green-700 to-emerald-800">
                 {podcast.coverImage ? (
-                  <img
+                  <OptimizedImage
                     src={podcast.coverImage}
                     alt={title}
+                    fill
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (

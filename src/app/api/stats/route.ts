@@ -55,7 +55,6 @@ export async function GET() {
       articlesByCategory,
     });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to fetch stats" },
       { status: 500 }

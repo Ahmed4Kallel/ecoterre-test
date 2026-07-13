@@ -24,6 +24,6 @@ export function useLocale() {
 
 export function createTranslator(locale: Locale, messages: Record<string, string>) {
   return (key: string): string => {
-    return messages[key] || key;
+    return messages[key] ?? key;
   };
 }

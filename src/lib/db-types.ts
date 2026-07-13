@@ -33,6 +33,7 @@ export interface ArticleRow {
   excerpt_ar: string;
   cover_image: string | null;
   audio_url: string | null;
+  video_url: string | null;
   pdf_url: string | null;
   author_id: string;
   status: "draft" | "published";

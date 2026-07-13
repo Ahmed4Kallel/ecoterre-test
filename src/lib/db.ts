@@ -17,12 +17,28 @@ import type {
 } from "./db-types";
 
 const ORDER_BY_RE = /^[a-zA-Z_][a-zA-Z0-9_]*(?:\s+(?:ASC|DESC))?(?:\s*,\s*[a-zA-Z_][a-zA-Z0-9_]*(?:\s+(?:ASC|DESC))?)*$/;
+const COLUMN_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+const TABLE_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 
 function safeOrderBy(value: string): string {
   if (!value || !ORDER_BY_RE.test(value.trim())) {
     return "created_at DESC";
   }
   return value.trim();
+}
+
+function safeColumn(value: string): string {
+  if (!COLUMN_RE.test(value)) {
+    throw new Error(`Invalid column name: ${value}`);
+  }
+  return value;
+}
+
+function safeTable(value: string): string {
+  if (!TABLE_RE.test(value)) {
+    throw new Error(`Invalid table name: ${value}`);
+  }
+  return value;
 }
 
 interface QueryOptions {
@@ -32,7 +48,7 @@ interface QueryOptions {
   offset?: number;
 }
 
-function mapArticleRow(row: ArticleRow): Article {
+export function mapArticleRow(row: ArticleRow): Article {
   const db = getDb();
   const catRows = db
     .prepare(
@@ -68,6 +84,7 @@ function mapArticleRow(row: ArticleRow): Article {
     readingTime: row.reading_time ?? 0,
     isFeatured: row.is_featured === 1,
     audioUrl: row.audio_url ?? undefined,
+    videoUrl: row.video_url ?? undefined,
     pdfUrl: row.pdf_url ?? undefined,
     publishedAt: row.published_at ?? undefined,
     createdAt: row.created_at,
@@ -119,7 +136,7 @@ function buildWhereClause(
   const params: unknown[] = [];
   for (const [key, value] of Object.entries(where)) {
     if (value !== undefined && value !== null) {
-      conditions.push(`"${key}" = ?`);
+      conditions.push(`"${safeColumn(key)}" = ?`);
       params.push(value);
     }
   }
@@ -135,7 +152,7 @@ export function findAll<T>(
 ): T[] {
   const db = getDb();
   const { clause, params } = buildWhereClause(options?.where ?? {});
-  let sql = `SELECT * FROM "${table}" ${clause}`;
+  let sql = `SELECT * FROM "${safeTable(table)}" ${clause}`;
 
   if (options?.orderBy) {
     sql += ` ORDER BY ${safeOrderBy(options.orderBy)}`;
@@ -216,7 +233,7 @@ export function findBy<T>(
 
   if (table === "users") {
     const row = db
-      .prepare(`SELECT * FROM users WHERE "${key}" = ?`)
+      .prepare(`SELECT * FROM users WHERE "${safeColumn(key)}" = ?`)
       .get(value) as UserRow | undefined;
     return row ? (mapUserRow(row) as unknown as T) : undefined;
   }
@@ -236,7 +253,7 @@ export function findBy<T>(
   }
 
   const row = db
-    .prepare(`SELECT * FROM "${table}" WHERE "${key}" = ?`)
+    .prepare(`SELECT * FROM "${safeTable(table)}" WHERE "${safeColumn(key)}" = ?`)
     .get(value) as T | undefined;
   return row;
 }
@@ -273,12 +290,13 @@ export function insert(
   }
 
   const keys = Object.keys(data);
+  const safeKeys = keys.map(safeColumn);
   const placeholders = keys.map(() => "?").join(", ");
   const values = keys.map((k) => data[k]);
-  const quotedKeys = keys.map((k) => `"${k}"`).join(", ");
+  const quotedKeys = safeKeys.map((k) => `"${k}"`).join(", ");
 
   db.prepare(
-    `INSERT INTO "${table}" (${quotedKeys}) VALUES (${placeholders})`
+    `INSERT INTO "${safeTable(table)}" (${quotedKeys}) VALUES (${placeholders})`
   ).run(...values);
 
   return data;
@@ -302,8 +320,8 @@ function insertArticle(
     (data.excerpt as Record<string, string> | undefined)?.ar ?? "";
 
   db.prepare(
-    `INSERT INTO articles (id, slug, title_fr, title_ar, content_fr, content_ar, excerpt_fr, excerpt_ar, cover_image, audio_url, pdf_url, author_id, status, views, reading_time, is_featured, published_at, scheduled_at, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO articles (id, slug, title_fr, title_ar, content_fr, content_ar, excerpt_fr, excerpt_ar, cover_image, audio_url, video_url, pdf_url, author_id, status, views, reading_time, is_featured, published_at, scheduled_at, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
     data.id,
     data.slug,
@@ -315,6 +333,7 @@ function insertArticle(
     excerptAr,
     data.coverImage ?? null,
     data.audioUrl ?? null,
+    data.videoUrl ?? null,
     data.pdfUrl ?? null,
     data.authorId,
     data.status ?? "draft",
@@ -446,22 +465,23 @@ export function update(
   }
 
   const existing = db
-    .prepare(`SELECT * FROM "${table}" WHERE id = ?`)
+    .prepare(`SELECT * FROM "${safeTable(table)}" WHERE id = ?`)
     .get(id) as Record<string, unknown> | undefined;
   if (!existing) return undefined;
 
   const keys = Object.keys(data);
+  const safeKeys = keys.map(safeColumn);
   if (keys.length === 0) return existing;
 
-  const setClauses = keys.map((k) => `"${k}" = ?`).join(", ");
+  const setClauses = safeKeys.map((k) => `"${k}" = ?`).join(", ");
   const values = keys.map((k) => data[k]);
 
   db.prepare(
-    `UPDATE "${table}" SET ${setClauses} WHERE id = ?`
+    `UPDATE "${safeTable(table)}" SET ${setClauses} WHERE id = ?`
   ).run(...values, id);
 
   return db
-    .prepare(`SELECT * FROM "${table}" WHERE id = ?`)
+    .prepare(`SELECT * FROM "${safeTable(table)}" WHERE id = ?`)
     .get(id) as Record<string, unknown>;
 }
 
@@ -495,6 +515,7 @@ function updateArticle(
   if (data.slug !== undefined) updates.slug = data.slug;
   if (data.coverImage !== undefined) updates.cover_image = data.coverImage;
   if (data.audioUrl !== undefined) updates.audio_url = data.audioUrl;
+  if (data.videoUrl !== undefined) updates.video_url = data.videoUrl;
   if (data.pdfUrl !== undefined) updates.pdf_url = data.pdfUrl;
   if (data.authorId !== undefined) updates.author_id = data.authorId;
   if (data.status !== undefined) updates.status = data.status;
@@ -507,7 +528,8 @@ function updateArticle(
 
   const keys = Object.keys(updates);
   if (keys.length > 0) {
-    const setClauses = keys.map((k) => `"${k}" = ?`).join(", ");
+    const safeKeys = keys.map(safeColumn);
+    const setClauses = safeKeys.map((k) => `"${k}" = ?`).join(", ");
     const values = keys.map((k) => updates[k]);
     db.prepare(`UPDATE articles SET ${setClauses} WHERE id = ?`).run(
       ...values,
@@ -575,7 +597,8 @@ function updateCategory(
 
   const keys = Object.keys(updates);
   if (keys.length > 0) {
-    const setClauses = keys.map((k) => `"${k}" = ?`).join(", ");
+    const safeKeys = keys.map(safeColumn);
+    const setClauses = safeKeys.map((k) => `"${k}" = ?`).join(", ");
     const values = keys.map((k) => updates[k]);
     db.prepare(`UPDATE categories SET ${setClauses} WHERE id = ?`).run(
       ...values,
@@ -611,7 +634,8 @@ function updateUser(
 
   const keys = Object.keys(updates);
   if (keys.length > 0) {
-    const setClauses = keys.map((k) => `"${k}" = ?`).join(", ");
+    const safeKeys = keys.map(safeColumn);
+    const setClauses = safeKeys.map((k) => `"${k}" = ?`).join(", ");
     const values = keys.map((k) => updates[k]);
     db.prepare(`UPDATE users SET ${setClauses} WHERE id = ?`).run(
       ...values,
@@ -628,7 +652,7 @@ function updateUser(
 export function remove(table: string, id: string): boolean {
   const db = getDb();
   const result = db
-    .prepare(`DELETE FROM "${table}" WHERE id = ?`)
+    .prepare(`DELETE FROM "${safeTable(table)}" WHERE id = ?`)
     .run(id);
   return result.changes > 0;
 }

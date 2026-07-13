@@ -55,7 +55,7 @@ export function requireAdmin(user: User | null): boolean {
 }
 
 export function requireAuthor(user: User | null): boolean {
-  return user?.role === "admin" || user?.role === "author";
+  return user?.role === "admin" || user?.role === "author" || user?.role === "editor";
 }
 
 export function getAllUsers(): User[] {

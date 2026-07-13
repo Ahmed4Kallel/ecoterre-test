@@ -1,9 +1,20 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "404",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: locale === "ar" ? "الصفحة غير موجودة" : "Page introuvable",
+    description:
+      locale === "ar"
+        ? "الصفحة التي تبحث عنها غير موجودة"
+        : "La page que vous cherchez n'existe pas",
+  };
+}
 
 export default function NotFound() {
   return (

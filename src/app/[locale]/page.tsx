@@ -14,6 +14,8 @@ import ReportsPreview from "@/components/home/ReportsPreview";
 import NewsletterBanner from "@/components/home/NewsletterBanner";
 import Sidebar from "@/components/home/Sidebar";
 
+export const revalidate = 60;
+
 type Params = Promise<{ locale: string }>;
 
 const PODCAST_SLUG = "podcast";
@@ -75,7 +77,7 @@ export default async function HomePage({ params }: { params: Params }) {
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex gap-8">
             <div className="flex-1 space-y-16 py-12 min-w-0">
-              <FeaturedGrid articles={featuredGridArticles} locale={locale} />
+              <FeaturedGrid articles={featuredGridArticles} locale={locale} categories={categories} />
 
               {categoriesToShow.map((cat) => {
                 const catArticles = publishedArticles

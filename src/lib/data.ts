@@ -7,43 +7,14 @@ import {
   getCategoryCounts,
   getDashboardStats,
   getTags as dbGetTags,
+  mapArticleRow,
 } from "./db";
 import { getDb } from "./database";
 import type { ArticleRow } from "./db-types";
 import type { Article, Category, Tag } from "./types";
 
-function makeArticle(row: ArticleRow, db: ReturnType<typeof getDb>): Article {
-  const catRows = db
-    .prepare(`SELECT category_id FROM article_categories WHERE article_id = ?`)
-    .all(row.id) as { category_id: string }[];
-  const categoryIds = catRows.map((c) => c.category_id);
-
-  const authorRow = db
-    .prepare(`SELECT name FROM users WHERE id = ?`)
-    .get(row.author_id) as { name: string } | undefined;
-
-  return {
-    id: row.id,
-    slug: row.slug,
-    title: { fr: row.title_fr, ar: row.title_ar },
-    content: { fr: row.content_fr, ar: row.content_ar },
-    excerpt: { fr: row.excerpt_fr, ar: row.excerpt_ar },
-    coverImage: row.cover_image ?? undefined,
-    categoryIds,
-    authorId: row.author_id,
-    authorName: authorRow?.name,
-    status: row.status as "draft" | "published",
-    publishedAt: row.published_at ?? undefined,
-    scheduledAt: row.scheduled_at ?? undefined,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-    audioUrl: row.audio_url ?? undefined,
-    pdfUrl: row.pdf_url ?? undefined,
-    readingTime: row.reading_time ?? 0,
-    isFeatured: row.is_featured === 1,
-    views: row.views ?? 0,
-    downloadCount: 0,
-  };
+function makeArticle(row: ArticleRow, _db: unknown): Article {
+  return mapArticleRow(row);
 }
 
 function mapTagRow(row: {

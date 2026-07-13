@@ -19,7 +19,6 @@ export async function GET() {
 
     return NextResponse.json({ users });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to fetch users" },
       { status: 500 }
@@ -80,7 +79,6 @@ export async function POST(request: NextRequest) {
     const { password: _, ...safe } = newUser;
     return NextResponse.json({ user: safe }, { status: 201 });
   } catch (e) {
-    console.error(e);
     return NextResponse.json(
       { error: "Failed to create user" },
       { status: 500 }
