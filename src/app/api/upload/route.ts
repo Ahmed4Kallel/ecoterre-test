@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireAuthor } from "@/lib/auth";
 import { saveMedia } from "@/lib/db";
 import { isAllowedMimeType, isSafeFileExtension, sanitizeFilename } from "@/lib/validation";
+import { isVercel } from "@/lib/database";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
@@ -20,6 +21,13 @@ export async function POST(request: NextRequest) {
     const user = await getSession();
     if (!requireAuthor(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "L'upload de fichiers n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const formData = await request.formData();

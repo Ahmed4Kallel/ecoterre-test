@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireAdmin } from "@/lib/auth";
 import { remove } from "@/lib/db";
-import { getDb } from "@/lib/database";
+import { getDb, isVercel } from "@/lib/database";
 
 export async function PATCH(
   request: NextRequest,
@@ -11,6 +11,13 @@ export async function PATCH(
     const user = await getSession();
     if (!requireAdmin(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La modification des contacts n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const { id } = await params;
@@ -32,6 +39,13 @@ export async function DELETE(
     const user = await getSession();
     if (!requireAdmin(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La suppression des contacts n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const { id } = await params;

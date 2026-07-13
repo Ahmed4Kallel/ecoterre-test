@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, setSession, hashPassword, verifyPassword } from "@/lib/auth";
-import { getDb } from "@/lib/database";
+import { getDb, isVercel } from "@/lib/database";
 
 export async function POST(request: NextRequest) {
   try {
     const user = await getSession();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "Le changement de mot de passe n'est pas disponible en démo. Contactez l'administrateur." },
+        { status: 400 }
+      );
     }
 
     const { currentPassword, newPassword } = await request.json();

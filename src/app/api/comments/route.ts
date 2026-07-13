@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getComments, createComment } from "@/lib/db";
 import { isValidEmail, sanitizeText, sanitizeHtmlInput } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { isVercel } from "@/lib/database";
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,6 +22,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (isVercel()) {
+      return NextResponse.json({ error: "Les commentaires ne sont pas disponibles en démo." }, { status: 400 });
+    }
+
     const { blocked, response, headers } = checkRateLimit(request, { limit: 10, windowMs: 60_000 });
     if (blocked && response) return response;
 

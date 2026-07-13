@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getTags, createTag } from "@/lib/db";
 import { getSession, requireAdmin } from "@/lib/auth";
+import { isVercel } from "@/lib/database";
 import { slugify } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
@@ -23,6 +24,13 @@ export async function POST(request: NextRequest) {
     const user = await getSession();
     if (!requireAdmin(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La création de tags n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const body = await request.json();

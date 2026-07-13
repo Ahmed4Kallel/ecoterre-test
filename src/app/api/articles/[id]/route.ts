@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { findById, update, remove, incrementArticleViews, getArticleTags, logArticleView } from "@/lib/db";
 import { slugify } from "@/lib/utils";
 import { getSession, requireAuthor } from "@/lib/auth";
+import { isVercel } from "@/lib/database";
 import type { Article } from "@/lib/types";
 
 export async function GET(
@@ -49,6 +50,13 @@ export async function PUT(
     const user = await getSession();
     if (!requireAuthor(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La modification d'articles n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const { id } = await params;
@@ -113,6 +121,13 @@ export async function DELETE(
     const user = await getSession();
     if (!requireAuthor(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La suppression d'articles n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const { id } = await params;

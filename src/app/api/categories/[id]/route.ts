@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { findAll, findById, update, remove } from "@/lib/db";
 import { slugify } from "@/lib/utils";
 import { getSession, requireAdmin } from "@/lib/auth";
+import { isVercel } from "@/lib/database";
 import type { Category } from "@/lib/types";
 
 export async function GET(
@@ -34,6 +35,13 @@ export async function PUT(
     const user = await getSession();
     if (!requireAdmin(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La modification de catégories n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const { id } = await params;
@@ -89,6 +97,13 @@ export async function DELETE(
     const user = await getSession();
     if (!requireAdmin(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La suppression de catégories n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const { id } = await params;

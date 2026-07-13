@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { findAll, insert, getArticleIdsByTagSlug } from "@/lib/db";
 import { generateId, slugify } from "@/lib/utils";
 import { getSession, requireAuthor } from "@/lib/auth";
+import { isVercel } from "@/lib/database";
 import type { Article } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
@@ -78,6 +79,13 @@ export async function POST(request: NextRequest) {
     const user = await getSession();
     if (!requireAuthor(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La création d'articles n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const body = await request.json();

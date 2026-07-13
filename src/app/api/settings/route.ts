@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireAdmin } from "@/lib/auth";
-import { getDb } from "@/lib/database";
+import { getDb, isVercel } from "@/lib/database";
 
 export async function GET() {
   try {
@@ -26,6 +26,13 @@ export async function PUT(request: NextRequest) {
     const user = await getSession();
     if (!requireAdmin(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La modification des paramètres n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const body = await request.json();

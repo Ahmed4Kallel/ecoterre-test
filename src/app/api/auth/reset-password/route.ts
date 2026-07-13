@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/database";
+import { getDb, isVercel } from "@/lib/database";
 import { hashPassword } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -13,6 +13,13 @@ interface ResetTokenRow {
 
 export async function POST(request: NextRequest) {
   try {
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La réinitialisation du mot de passe n'est pas disponible en démo." },
+        { status: 400 }
+      );
+    }
+
     const { blocked, response, headers } = checkRateLimit(request, {
       limit: 5,
       windowMs: 60_000,

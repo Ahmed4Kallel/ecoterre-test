@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findById, remove } from "@/lib/db";
 import { getSession, requireAdmin } from "@/lib/auth";
+import { isVercel } from "@/lib/database";
 import type { User } from "@/lib/types";
 
 export async function DELETE(
@@ -11,6 +12,13 @@ export async function DELETE(
     const currentUser = await getSession();
     if (!requireAdmin(currentUser)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La suppression d'utilisateurs n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const { id } = await params;

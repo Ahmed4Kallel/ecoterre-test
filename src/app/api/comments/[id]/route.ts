@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireAdmin } from "@/lib/auth";
 import { findAll, findById, update, remove } from "@/lib/db";
+import { isVercel } from "@/lib/database";
 
 export async function GET(
   _request: NextRequest,
@@ -32,6 +33,13 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La modification des commentaires n'est pas disponible en démo." },
+        { status: 400 }
+      );
+    }
+
     const { id } = await params;
     const body = await request.json();
 
@@ -58,6 +66,13 @@ export async function DELETE(
     const user = await getSession();
     if (!requireAdmin(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La suppression des commentaires n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const { id } = await params;

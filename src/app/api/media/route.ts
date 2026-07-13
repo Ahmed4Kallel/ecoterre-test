@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireAdmin } from "@/lib/auth";
+import { isVercel } from "@/lib/database";
 import type { MediaItem } from "@/lib/types";
 import fs from "fs";
 import path from "path";
@@ -45,6 +46,13 @@ export async function DELETE(request: NextRequest) {
     const user = await getSession();
     if (!requireAdmin(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (isVercel()) {
+      return NextResponse.json(
+        { error: "La suppression de fichiers n'est pas disponible en démo." },
+        { status: 400 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
