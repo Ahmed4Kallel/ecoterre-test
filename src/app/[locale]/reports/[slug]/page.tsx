@@ -2,8 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import type { Article, Category } from "@/lib/types";
-import articlesData from "@/data/articles.json";
-import categoriesData from "@/data/categories.json";
+import { getArticleBySlug, getCategories } from "@/lib/data";
 import frMessages from "@/i18n/fr/common.json";
 import arMessages from "@/i18n/ar/common.json";
 import { formatMetaTitle, formatMetaDescription, getSiteUrl } from "@/lib/seo";
@@ -19,14 +18,11 @@ export default async function ReportPage({ params }: { params: Params }) {
   const messages = locale === "ar" ? arMessages : frMessages;
   const dir = locale === "ar" ? "rtl" : "ltr";
 
-  const articles = articlesData as Article[];
-  const categories = categoriesData as Category[];
+  const report = await getArticleBySlug(slug);
 
-  const report = articles.find(
-    (a) => a.slug === slug && a.status === "published"
-  );
+  if (!report || report.status !== "published") notFound();
 
-  if (!report) notFound();
+  const categories = await getCategories();
 
   const reportsCat = categories.find((c) => c.slug === "reports");
   const isReport = reportsCat && report.categoryIds.includes(reportsCat.id);
@@ -156,8 +152,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params;
   const lang = locale as "fr" | "ar";
-  const articles = articlesData as Article[];
-  const report = articles.find((a) => a.slug === slug);
+  const report = await getArticleBySlug(slug);
   const baseUrl = getSiteUrl();
   const messages = locale === "ar" ? arMessages : frMessages;
 

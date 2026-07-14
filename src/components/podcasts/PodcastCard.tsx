@@ -22,10 +22,8 @@ export default function PodcastCard({ podcast, locale, onPlay }: PodcastCardProp
     : null;
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.02 }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="group rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
+    <div
+      className="group rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-green-700 to-emerald-800">
         {podcast.coverImage ? (
@@ -85,6 +83,6 @@ export default function PodcastCard({ podcast, locale, onPlay }: PodcastCardProp
           {date && <span>{date}</span>}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

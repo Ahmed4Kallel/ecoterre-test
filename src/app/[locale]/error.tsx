@@ -1,20 +1,6 @@
 "use client";
 
-import type { Metadata } from "next";
 import ErrorMessage from "@/components/ui/ErrorMessage";
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  return {
-    title: locale === "ar" ? "خطأ" : "Erreur",
-    description:
-      locale === "ar" ? "حدث خطأ غير متوقع" : "Une erreur inattendue s'est produite",
-  };
-}
 
 export default function LocaleError({
   error,

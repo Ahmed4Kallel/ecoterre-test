@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 const locales = ["fr", "ar"];
 const defaultLocale = "fr";
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const host = request.headers.get("host") || "";
   const proto = host.includes("localhost") ? "http" : "https";

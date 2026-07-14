@@ -94,6 +94,8 @@ export async function POST(request: NextRequest) {
       excerpt: body.excerpt,
       coverImage: body.coverImage || undefined,
       videoUrl: body.videoUrl || undefined,
+      audioUrl: body.audioUrl || undefined,
+      pdfUrl: body.pdfUrl || undefined,
       categoryIds: body.categoryIds || [],
       tagIds: body.tagIds || [],
       authorId: user!.id,

@@ -44,6 +44,8 @@ export default function ArticleEditor({ article, categories }: ArticleEditorProp
   const [excerptAr, setExcerptAr] = useState(article?.excerpt.ar || "");
   const [coverImage, setCoverImage] = useState(article?.coverImage || "");
   const [videoUrl, setVideoUrl] = useState(article?.videoUrl || "");
+  const [audioUrl, setAudioUrl] = useState(article?.audioUrl || "");
+  const [pdfUrl, setPdfUrl] = useState(article?.pdfUrl || "");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(
     article?.categoryIds || []
   );
@@ -156,6 +158,8 @@ export default function ArticleEditor({ article, categories }: ArticleEditorProp
       excerpt: { fr: excerptFr, ar: excerptAr },
       coverImage: coverImage || undefined,
       videoUrl: videoUrl || undefined,
+      audioUrl: audioUrl || undefined,
+      pdfUrl: pdfUrl || undefined,
       categoryIds: selectedCategoryIds,
       status,
     };
@@ -344,19 +348,51 @@ export default function ArticleEditor({ article, categories }: ArticleEditorProp
           </div>
         </div>
 
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Vidéo YouTube
-          </label>
-          <input
-            value={videoUrl}
-            onChange={(e) => setVideoUrl(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none"
-            placeholder="https://www.youtube.com/watch?v=..."
-          />
-          <p className="mt-1 text-xs text-gray-400">
-            Lien YouTube à afficher sur l&apos;article
-          </p>
+        <div className="grid gap-6 rounded-lg border border-gray-200 bg-white p-6 md:grid-cols-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Vidéo YouTube
+            </label>
+            <input
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none"
+              placeholder="https://www.youtube.com/watch?v=..."
+            />
+            <p className="mt-1 text-xs text-gray-400">
+              Lien YouTube à afficher sur l&apos;article
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Fichier Audio (Podcast)
+            </label>
+            <input
+              value={audioUrl}
+              onChange={(e) => setAudioUrl(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none"
+              placeholder="https://example.com/audio.mp3"
+            />
+            <p className="mt-1 text-xs text-gray-400">
+              Lien vers le fichier audio .mp3 pour le podcast
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Fichier PDF (Rapport)
+            </label>
+            <input
+              value={pdfUrl}
+              onChange={(e) => setPdfUrl(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none"
+              placeholder="https://example.com/rapport.pdf"
+            />
+            <p className="mt-1 text-xs text-gray-400">
+              Lien vers le fichier PDF du rapport
+            </p>
+          </div>
         </div>
 
         <div className="grid gap-6 rounded-lg border border-gray-200 bg-white p-6 lg:grid-cols-2">

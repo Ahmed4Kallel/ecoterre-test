@@ -1,14 +1,13 @@
 import type { MetadataRoute } from "next";
 import type { Article, Category } from "@/lib/types";
 import { getTags } from "@/lib/db";
-import articlesData from "@/data/articles.json";
-import categoriesData from "@/data/categories.json";
+import { getPublishedArticles, getCategories } from "@/lib/data";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ecoterre.tn";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const articles = articlesData as Article[];
-  const categories = categoriesData as Category[];
+  const articles = await getPublishedArticles({ limit: 1000 });
+  const categories = await getCategories();
   const tagRows = await getTags();
   const tags = tagRows.map((t) => ({ slug: t.slug, name: { fr: t.name_fr, ar: t.name_ar } }));
   const published = articles.filter((a) => a.status === "published");

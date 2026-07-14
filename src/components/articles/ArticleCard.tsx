@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { useLocale } from "@/lib/i18n";
 import type { Article } from "@/lib/types";
 import OptimizedImage from "@/components/ui/OptimizedImage";
@@ -24,10 +23,7 @@ export default function ArticleCard({ article, locale }: ArticleCardProps) {
     : null;
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.02, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
-    >
+    <div className="transition-all duration-200 hover:scale-[1.02] hover:shadow-xl">
       <Link
         href={`/${locale}/article/${article.slug}`}
         className="group block overflow-hidden rounded-lg bg-white shadow-md transition-shadow"
@@ -80,6 +76,6 @@ export default function ArticleCard({ article, locale }: ArticleCardProps) {
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }

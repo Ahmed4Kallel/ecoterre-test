@@ -89,6 +89,8 @@ export async function PUT(
     if (body.excerpt) updates.excerpt = body.excerpt;
     if (body.coverImage !== undefined) updates.coverImage = body.coverImage;
     if (body.videoUrl !== undefined) updates.videoUrl = body.videoUrl;
+    if (body.audioUrl !== undefined) updates.audioUrl = body.audioUrl;
+    if (body.pdfUrl !== undefined) updates.pdfUrl = body.pdfUrl;
     if (body.categoryIds !== undefined) updates.categoryIds = body.categoryIds;
     if (body.tagIds !== undefined) updates.tagIds = body.tagIds;
     if (body.status) updates.status = body.status;

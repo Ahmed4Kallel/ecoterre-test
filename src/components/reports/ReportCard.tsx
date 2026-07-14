@@ -23,10 +23,8 @@ export default function ReportCard({ report, locale }: ReportCardProps) {
   const downloadCount = report.downloadCount || 0;
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.02 }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="group rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
+    <div
+      className="group rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
     >
       <Link href={`/${locale}/article/${report.slug}`} className="block">
         <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-blue-700 to-indigo-800">
@@ -81,6 +79,6 @@ export default function ReportCard({ report, locale }: ReportCardProps) {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
