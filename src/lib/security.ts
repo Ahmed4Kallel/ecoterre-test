@@ -1,17 +1,6 @@
 import "server-only";
 
-import { JSDOM } from "jsdom";
-import createDOMPurify from "dompurify";
-
-let _purify: ReturnType<typeof createDOMPurify> | null = null;
-
-function getDOMPurify() {
-  if (!_purify) {
-    const { window } = new JSDOM("");
-    _purify = createDOMPurify(window as never);
-  }
-  return _purify;
-}
+import DOMPurify from "isomorphic-dompurify";
 
 const ALLOWED_TAGS = [
   "a",
@@ -125,7 +114,7 @@ const FORBID_ATTR = ["onerror", "onload", "onclick", "onmouseover", "onfocus", "
 
 export function sanitizeHtml(html: string): string {
   if (!html) return "";
-  return getDOMPurify().sanitize(html, {
+  return DOMPurify.sanitize(html, {
     ALLOWED_TAGS,
     ALLOWED_ATTR,
     FORBID_ATTR,
