@@ -1,6 +1,6 @@
 import "server-only";
 
-import DOMPurify from "isomorphic-dompurify";
+import sanitize from "sanitize-html";
 
 const ALLOWED_TAGS = [
   "a",
@@ -59,7 +59,7 @@ const ALLOWED_TAGS = [
   "video",
 ];
 
-const ALLOWED_ATTR = [
+const ALLOWED_ATTR_LIST = [
   "accept",
   "action",
   "align",
@@ -75,7 +75,6 @@ const ALLOWED_ATTR = [
   "colspan",
   "controls",
   "coords",
-  "data-*",
   "datetime",
   "dir",
   "disabled",
@@ -110,19 +109,14 @@ const ALLOWED_ATTR = [
   "width",
 ];
 
-const FORBID_ATTR = ["onerror", "onload", "onclick", "onmouseover", "onfocus", "onblur"];
-
 export function sanitizeHtml(html: string): string {
   if (!html) return "";
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS,
-    ALLOWED_ATTR,
-    FORBID_ATTR,
-    ALLOW_DATA_ATTR: true,
-    ALLOW_UNKNOWN_PROTOCOLS: false,
-    KEEP_CONTENT: true,
-    RETURN_DOM_FRAGMENT: false,
-    RETURN_DOM: false,
+  return sanitize(html, {
+    allowedTags: ALLOWED_TAGS,
+    allowedAttributes: {
+      "*": ALLOWED_ATTR_LIST,
+    },
+    allowedSchemes: ["http", "https", "mailto", "data"],
   });
 }
 
